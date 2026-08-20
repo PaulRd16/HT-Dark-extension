@@ -1,5 +1,7 @@
 # HT Dark
 
+*[English version](README.en.md)*
+
 Thème sombre pour [Hattrick](https://www.hattrick.org), qui **conserve la couleur de chaque équipe
 comme accent** au lieu de l'aplatir. CSS uniquement — pas une ligne de JavaScript.
 

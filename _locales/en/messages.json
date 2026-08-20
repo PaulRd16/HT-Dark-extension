@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "HT Dark",
+    "description": "Name of the extension, shown in the browser and on the listing."
+  },
+  "extensionDescription": {
+    "message": "A dark theme for Hattrick that keeps each team's colour as an accent. CSS only, no JavaScript.",
+    "description": "Short description shown on the add-on listing."
+  }
+}

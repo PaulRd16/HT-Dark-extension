@@ -96,7 +96,8 @@ def main():
     # --- 2. Coherence entre les deux manifestes --------------------------
     verifier(ff.get("manifest_version") == 2, "manifest.firefox.json doit etre en MV2")
     verifier(ch.get("manifest_version") == 3, "manifest.json doit etre en MV3")
-    for cle in ("name", "version", "description", "icons", "content_scripts"):
+    for cle in ("name", "version", "description", "icons", "content_scripts",
+                "default_locale"):
         verifier(cle in ff, "manifest.firefox.json : cle « {} » manquante".format(cle))
         verifier(cle in ch, "manifest.json : cle « {} » manquante".format(cle))
         if cle in ff and cle in ch and ff[cle] != ch[cle]:
@@ -121,6 +122,18 @@ def main():
     for rel in ff["icons"].values():
         a_empaqueter.append((RACINE / rel, rel))
     a_empaqueter.append((RACINE / "LICENSE", "LICENSE"))
+
+    # Les traductions ne sont pas referencees par le manifeste : elles sont
+    # retrouvees a partir de `default_locale`, donc ajoutees explicitement.
+    if ff.get("default_locale"):
+        locales = sorted((RACINE / "_locales").glob("*/messages.json"))
+        verifier(locales, "default_locale est declare mais _locales/ est vide")
+        verifier(
+            any(p.parent.name == ff["default_locale"] for p in locales),
+            "aucune traduction pour la langue par defaut « {} »".format(ff["default_locale"]),
+        )
+        for p in locales:
+            a_empaqueter.append((p, "_locales/{}/messages.json".format(p.parent.name)))
 
     for source, arcname in a_empaqueter:
         verifier(

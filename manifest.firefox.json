@@ -1,8 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "HT Dark",
+  "default_locale": "en",
+  "name": "__MSG_extensionName__",
   "version": "1.0.0",
-  "description": "Thème sombre pour Hattrick qui conserve la couleur de chaque équipe comme accent. CSS uniquement, aucun JavaScript.",
+  "description": "__MSG_extensionDescription__",
   "author": "PaulRd16",
   "browser_specific_settings": {
     "gecko": {
