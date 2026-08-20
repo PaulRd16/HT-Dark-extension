@@ -47,9 +47,29 @@ blockquote.quote blockquote.quote blockquote.quote {
   background-color: #3b464f !important;
 }
 
-/* Ligne « X a ecrit : » en tete de citation */
+/* Ligne « X a ecrit : » en tete de citation.
+ *
+ * Le gris secondaire tient sur les deux premiers niveaux d'imbrication (5.52 et
+ * 4.65:1) mais tombe a 3.92 sur le fond du troisieme, plus clair. Au-dela du
+ * deuxieme niveau, le libelle repasse donc en texte principal — 7.67:1. C'est le
+ * rappel du point 6 : verifier sur quel fond vit un texte avant de lui appliquer la
+ * couleur « secondaire ». */
 .quoteto {
   color: var(--ht-fg-dim) !important;
+}
+
+blockquote.quote blockquote.quote blockquote.quote .quoteto {
+  color: var(--ht-fg) !important;
+}
+
+/* Message officiel de l'equipe Hattrick. Hattrick le signale par un ambre vif
+ * rgb(255,186,0), pose en !important — la meme teinte que FoxTrick utilise pour son
+ * badge `.ft-staff-official`. C'est un signal fort et rare : le fond reste tel quel,
+ * conformement au point 7, et seul le texte passe en sombre. 1.36 -> 9.63:1.
+ *
+ * Classe doublee : la regle du site est en (0,1,0) avec !important, comme la notre. */
+.cfHighlighted.cfHighlighted {
+  color: var(--ht-on-accent) !important;
 }
 
 /* --- Spoilers --------------------------------------------------------------- */
