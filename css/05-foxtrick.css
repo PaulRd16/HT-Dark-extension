@@ -72,11 +72,25 @@ span[id^="ft_"] {
 /* En-tetes de section de la boite de liens (« Main Links », « Tournaments »,
  * « Youth Links », « Other ») : rgb(208,208,208), entre 1.22 et 1.59:1. Presents sur
  * toutes les pages. Les trois derniers portent un id, le premier n'a que .ft-dummy —
- * classe bien trop generique chez FoxTrick pour etre ciblee a nu, d'ou le scope. */
-#ft_tournament_icon,
+ * classe bien trop generique chez FoxTrick pour etre ciblee a nu, d'ou le scope.
+ *
+ * DEUX CORRECTIFS apres mesure sur un HT-mail ouvert, ou « Main Links » et
+ * « Tournaments » restaient gris clair a 1.22:1 alors que les deux autres etaient bons :
+ *
+ *  - `#ft_tournament_icon` etait au SINGULIER. L'identifiant reel est au pluriel :
+ *    le selecteur n'avait jamais rien cible depuis l'origine. Une regle qui ne
+ *    correspond a rien echoue en silence, exactement comme une regle qui perd en
+ *    specificite.
+ *
+ *  - Dans l'editeur de message, FoxTrick rend sa barre de liens sous `.HTMLToolbar`
+ *    et non sous `#ft-links-box` : le scope ne l'atteignait pas. Le prefixe `div` est
+ *    indispensable — la barre contient 19 `.ft-dummy`, dont 18 sont les `<img>` des
+ *    icones et un seul est le bandeau. Sans lui, on repeindrait les icones. */
+#ft_tournament_icons,
 #ft_youth_icons,
 #ft_other_icons,
-#ft-links-box .ft-dummy {
+#ft-links-box .ft-dummy,
+.HTMLToolbar div.ft-dummy {
   background-color: var(--ht-surface-3) !important;
   color: var(--ht-fg) !important;
 }
