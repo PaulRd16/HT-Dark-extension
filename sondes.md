@@ -62,6 +62,12 @@ Le signe qui doit alerter : un ratio médiocre mais pas catastrophique sur un é
 les ancêtres sont transparents. Comparer alors les rectangles des deux couches — si l'un est
 contenu dans l'autre, c'est lui le vrai fond.
 
+**Deuxième limite : la sonde ne teste pas la visibilité.** Un élément en `visibility: hidden` a
+bien une taille et une couleur de fond, donc il apparaît dans les surfaces claires alors qu'il
+n'est jamais peint. Vu sur `a.close-overlay` (le voile des fenêtres superposées), signalé comme
+508 000 px² de blanc alors qu'il est masqué au repos. Ajouter `getComputedStyle(e).visibility` au
+filtre, ou vérifier l'élément avant de conclure.
+
 ---
 
 ## 2. Quelle règle gagne sur cet élément ?

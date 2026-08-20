@@ -911,11 +911,6 @@ li.message-center-messagelist-item.selected {
   filter: invert(0.88);
 }
 
-/* Noms d'expediteur : rgb(122,122,122) a 3.60:1, sur 152 lignes. */
-.sender-name {
-  color: var(--ht-fg) !important;
-}
-
 .setting-label {
   color: var(--ht-fg) !important;
 }
@@ -988,14 +983,12 @@ button.c-day.c-day.c-selected-day {
  * doubler et sans toucher aux hachages.
  *
  * Selecteurs volontairement NON scopes a la page : ces widgets sont reutilisables et
- * une classe nue les suivra partout ou Hattrick les affichera. */
-.transfer-row-top,
-.thread-row-top,
-.todo-staff-role,
-.add-supporter,
-ul.task-group .deadline {
-  color: var(--ht-fg-dim) !important;
-}
+ * une classe nue les suivra partout ou Hattrick les affichera.
+ *
+ * Les conteneurs portant le gris secondaire rgb(122,122,122) sont depuis regroupes
+ * avec tous leurs semblables dans 03-components.css : la teinte revenait dans trop
+ * de composants pour rester traitee page par page. Seuls restent ici ceux qui ont
+ * une couleur qui leur est propre. */
 
 /* Le nom de l'equipe est le texte principal de sa ligne et Hattrick lui donne sa
  * propre regle. Il DESCEND de `.transfer-row-top` : sans cette seconde declaration,
@@ -1021,10 +1014,6 @@ ul.task-group .deadline {
 .unread-badge.grey-color {
   background-color: var(--ht-surface-3) !important;
   color: var(--ht-fg) !important;
-}
-
-.info-row {
-  color: var(--ht-fg-dim) !important; /* rgb(122,122,122) : 3.60:1 */
 }
 
 /* ===========================================================================

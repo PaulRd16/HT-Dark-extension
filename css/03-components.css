@@ -592,6 +592,34 @@ legend h3,
   color: var(--ht-fg) !important;
 }
 
+/* --- Le gris secondaire rgb(122,122,122) de Hattrick ------------------------ */
+/* Hattrick emploie cette teinte comme texte secondaire dans TOUS ses composants
+ * recents — 3.60:1 sur nos surfaces, juste sous le seuil. Elle etait attrapee page
+ * par page : noms d'expediteur ici, echeances de transfert la, dates de fil ailleurs.
+ * C'est le signal d'alerte du point 2 — une regle par page pour le meme defaut veut
+ * dire qu'on est au mauvais niveau.
+ *
+ * Regroupees ici, avec leur volume constate. Quand la teinte reapparait dans un
+ * nouveau composant, il y a UNE LIGNE a ajouter a cette liste, pas un bloc a ecrire
+ * dans une section de page.
+ *
+ * Les selecteurs ne sont volontairement pas scopes : ces composants sont
+ * reutilisables et se retrouvent sur plusieurs pages. */
+.sender-name,
+.info-row,
+.transfer-row-top,
+.thread-row-top,
+.todo-staff-role,
+.add-supporter,
+.messages-staff-role,
+.message-sender,
+.message-date,
+.message-center-messagelist-sender span,
+.message-center-messagelist-date,
+ul.task-group .deadline {
+  color: var(--ht-fg-dim) !important;
+}
+
 /* Gris rgb(102,102,102) des dates et petits textes : 2.82:1.
  *
  * `.ft-dummy` a ete RETIRE de cette liste. C'est une classe marqueur que FoxTrick
@@ -866,6 +894,14 @@ hattrick-reactions::part(dropdown) {
   color: var(--ht-fg) !important;
 }
 
+/* Onglet « QUICK HELP » replie, visible sur toutes les pages : Hattrick le pose sur
+ * un vert pale rgb(171,203,172) avec un vert fonce rgb(62,103,63) dessus — du vert sur
+ * du vert, 3.69:1. Meme traitement que les autres aplats clairs porteurs : le fond
+ * reste, le texte passe en sombre. */
+.helpbox-trigger span {
+  color: var(--ht-on-accent) !important;
+}
+
 .helpbox-footer-option.active,
 .helpbox-footer-option.active span {
   color: var(--ht-on-accent) !important;
@@ -917,6 +953,18 @@ div.edited {
  * il faudra alors ajouter la variante correspondante. */
 tr.gray-background.gray-background {
   background-color: var(--ht-surface-3) !important;
+}
+
+/* Panneau « acces refuse », affiche quand l'equipe courante n'a pas acces a une
+ * section (equipe feminine, division non eligible...). Fond blanc pur sur 67 000 px²
+ * avec notre texte clair dessus : 1.26:1 — toute la page reduite a un bloc illisible.
+ *
+ * Place ici et non dans une section de page : constate a l'identique sur l'Arena ET
+ * sur le marche des transferts, donc c'est un composant site-wide. Jamais rencontre
+ * plus tot faute d'avoir visite ces pages avec une equipe non eligible. */
+.hfi-access-denied-content {
+  background-color: var(--ht-surface) !important;
+  color: var(--ht-fg) !important;
 }
 
 /* Encarts d'information : estimation de transfert (alimentee par CHPP) et autres
@@ -983,6 +1031,18 @@ td > div.flex > span.name {
  * .boxBody dans .box.main). Encadrer chaque niveau produisait des cadres dans des
  * cadres, colles bord a bord — 64 anneaux sur la seule page des forums. Seule la
  * boite la plus exterieure est encadree. */
+/* Voile des fenetres superposees. Hattrick le pose en rgba(255,255,255,0.95) — un
+ * blanc quasi opaque, invisible au repos (`visibility: hidden`) mais qui recouvre
+ * toute la page des qu'une superposition s'ouvre. Sur un theme sombre, c'est un flash
+ * blanc a chaque ouverture. Meme role, donc meme logique : un voile assombrit ce qu'il
+ * y a derriere, il ne l'eclaire pas.
+ *
+ * Le repere `visibility: hidden` explique pourquoi il avait echappe aux relevees : il
+ * a bien une taille, mais n'est jamais peint tant qu'aucune superposition n'est ouverte. */
+.close-overlay {
+  background-color: rgba(10, 12, 14, 0.85) !important;
+}
+
 .box:not(.box *),
 .pageOverlay,
 .hoverDiv-inner,
