@@ -1,0 +1,241 @@
+/* HT Dark — regles ciblant FoxTrick.
+ *
+ * FoxTrick est une extension tierce populaire chez les joueurs de Hattrick. Elle injecte
+ * son propre balisage dans les pages : boites laterales, menus surgissants, tableau de
+ * competences, badges de role sur les pseudos du forum.
+ *
+ * Ce fichier est INERTE si FoxTrick n'est pas installe : aucun de ses selecteurs ne
+ * correspond alors a quoi que ce soit dans la page.
+ */
+
+/* `.ft-note` (FoxTrick) pose son propre fond en style EN LIGNE avec !important,
+ * rgb(239,239,255) — un lavande pale qui gagne sur notre `.alert` ci-dessus des
+ * qu'un `.ft-note` est niche dedans (cas du prompt de confirmation « Do you wish to
+ * transfer list this player? », menu Owner actions de la fiche joueur). Le TEXTE,
+ * lui, n'a pas sa propre regle : il continue d'heriter --ht-warn de `.alert`, d'ou
+ * de l'ambre sur du lavande a 1.98:1.
+ *
+ * Scope a `.alert .ft-note` plutot qu'a `.ft-note` seul : rien ne garantit que
+ * FoxTrick ne reutilise pas cette classe hors contexte d'alerte ailleurs sur le site,
+ * ou l'ambre ne conviendrait pas forcement. */
+.alert .ft-note {
+  background-color: var(--ht-warn-bg) !important;
+}
+
+/* --- Surlignage de l'equipe active (FoxTrick) ------------------------------ */
+/* FoxTrick marque les lignes qui citent l'equipe de l'utilisateur avec un creme
+ * rgb(238,238,221), pose sans !important. Utile — il designe son equipe active sur
+ * toutes les pages ou le nom du club apparait — mais beaucoup trop lumineux ici.
+ * On garde le reperage avec une teinte chaude discrete, distincte des surfaces
+ * froides de la palette. */
+.ftTeamHighlight {
+  background-color: #2f2f24 !important;
+}
+
+/* Entrees « copier l'annonce » de FoxTrick : rgb(239,239,255). */
+li.ft-copy-player-ad {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Liens et indicateurs de FoxTrick, en vert rgb(63,113,55) : 3.08:1. */
+a[id^="ft_"],
+span[id^="ft_"] {
+  color: var(--ht-link) !important;
+}
+
+/* --- FoxTrick -------------------------------------------------------------- */
+/* Quand FoxTrick est installe, il ajoute ses propres boites dans la colonne laterale.
+ * Elles portent .box.sidebarBox et sont donc deja traitees plus haut — cette regle
+ * n'est la que pour les cas ou FoxTrick force ses propres couleurs. */
+/* `#ft-monitor-live-links` est le tableau du monitor place en widget sur le tableau
+ * de bord — un id distinct de `#ft-monitor-div`, la version de la colonne laterale,
+ * et il reste en rgb(247,247,247) tant qu'on ne le nomme pas. FoxTrick le pose en
+ * (1,0,0) sans !important. */
+#ft-links-box,
+#ft-monitor-sidebar-box,
+#ft-monitor-div,
+#ft-monitor-live-links {
+  background-color: var(--ht-surface) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* En-tetes d'equipe dans « My Monitor » : rgb(247,247,247), avec les liens de pays a
+ * 1.77:1 dessus. Le ciblage passe par #ft-monitor-div : poser un fond sur les `h3`
+ * a nu ajouterait des bandeaux clairs partout ailleurs sur le site, alors qu'il n'y
+ * en a pas. */
+#ft-monitor-div h3 {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* En-tetes de section de la boite de liens (« Main Links », « Tournaments »,
+ * « Youth Links », « Other ») : rgb(208,208,208), entre 1.22 et 1.59:1. Presents sur
+ * toutes les pages. Les trois derniers portent un id, le premier n'a que .ft-dummy —
+ * classe bien trop generique chez FoxTrick pour etre ciblee a nu, d'ou le scope. */
+#ft_tournament_icon,
+#ft_youth_icons,
+#ft_other_icons,
+#ft-links-box .ft-dummy {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* --- Menus surgissants de FoxTrick ----------------------------------------- */
+/* ul.ft-pop : fond rgb(238,238,238) et texte noir, poses sans !important. */
+ul.ft-pop {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+ul.ft-pop > li {
+  border-bottom-color: var(--ht-line) !important;
+}
+
+/* Classe doublee : la regle de survol de FoxTrick est en (0,2,2) comme la notre. */
+ul.ft-pop.ft-pop > li:hover {
+  background-color: var(--ht-surface-3) !important;
+}
+
+ul.ft-pop > li a,
+ul.ft-pop span {
+  color: var(--ht-link) !important;
+}
+
+/* --- Tableau de notes de FoxTrick ------------------------------------------- */
+/* Pose sur un vert sombre rgb(63,113,54) qui lui est propre. Le gris secondaire de
+ * la palette y donnait 2.35:1 ; le texte principal remonte a 4.5. */
+.ft_rating_table_row td,
+.ft_rating_table_row b,
+.ft_rating_table_row th {
+  color: var(--ht-fg) !important;
+}
+
+/* ===========================================================================
+ * JOUEURS — releve du 15/08/2026 sur /Club/Players/
+ *
+ * L'essentiel de cette page vient de FoxTrick, dont le tableau de competences
+ * (« Skill Table ») est un composant a part entiere, tres utilise.
+ * FoxTrick le rend en blanc pur : 350 cellules a corriger.
+ * =========================================================================== */
+
+/* --- Tableau de competences FoxTrick --------------------------------------- */
+.ft_skilltable_container,
+.ft_skilltable_container td,
+.ft_skilltable td,
+.ft_skilltable th {
+  background-color: var(--ht-surface) !important;
+}
+
+/* Colonnes a fond alterne rgb(238,238,238).
+ *
+ * SCOPE PAR `.ft_skilltable` : `td.status`, `td.formatted-num` et `td.latest-match`
+ * sont des classes NUES. Laissees telles quelles, elles peignaient n'importe quel
+ * `td` du site portant un de ces noms, tres loin du tableau de FoxTrick. */
+.ft_skilltable td.ft-skilltable_player,
+.ft_skilltable td.status,
+.ft_skilltable td.formatted-num,
+.ft_skilltable td.latest-match {
+  background-color: var(--ht-surface-2) !important;
+}
+
+.ft_skilltable th,
+.ft_skilltable_customizetable th {
+  color: var(--ht-fg-dim) !important;
+  border-color: var(--ht-line) !important;
+}
+
+/* --- Menus deroulants de FoxTrick ------------------------------------------ */
+/* Les selecteurs « Category » et « -- Filters -- » en haut de la liste. FoxTrick
+ * les enveloppe dans .ft-select-container et remplace le select natif, ce qui les
+ * fait echapper au color-scheme: dark de 02-base.css. */
+.ft-select-container,
+.ft-select-container select,
+select.ft-dummy {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+  border-color: var(--ht-line) !important;
+}
+
+/* --- Selecteurs issus de regles autrefois partagees avec du natif ------------ */
+/* Ces trois regles vivaient dans des declarations groupant natif et FoxTrick. En
+ * scindant, la partie native est restee dans 03/04 et seule la part FoxTrick est ici. */
+
+/* Gris rgb(102,102,102) des dates et petits textes : 2.82:1. Pendant FoxTrick de la
+ * regle sur `.date, .smallText, .shy...` de 03-components.css. */
+.ft-date {
+  color: var(--ht-fg-dim) !important;
+}
+
+/* `:not(.ft-staff)` est indispensable : FoxTrick pose ses propres badges de role (HT
+ * en rouge, MOD en jaune...) sur des liens qui partagent EXACTEMENT cette structure.
+ * Sans l'exclusion, notre fond ecraserait ces cinq signaux — voir le bloc « Badges de
+ * role » ci-dessus. */
+.ft-popup-span a.inner:not(.ft-staff) {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Encart de simulation FoxTrick, pose sur le vert fonce rgb(63,113,54) du terrain.
+ * Notre regle large sur `h2` y posait --ht-green-head : du vert sur du vert, 2.79:1.
+ * Rappel du point 6 — verifier sur quel fond vit un texte avant de le colorer. */
+#ft_simulation_ratings-new h2 {
+  color: var(--ht-on-accent-light) !important;
+}
+
+/* --- Badges de role FoxTrick (.ft-staff-*) ---------------------------------- */
+/* Objectif : faire reapparaitre le surlignage que FoxTrick
+ * posait sur les pseudos « HT-» (staff Hattrick), « MOD-» (moderateurs), « GM-»,
+ * « LA-» et CHPP, disparu sans que rien ne le signale.
+ *
+ * FoxTrick pose deja ses propres couleurs, en style INLINE injecte par le manifeste
+ * de l'extension — invisible dans document.styleSheets tant qu'on ne l'a pas lu
+ * directement sur un pseudo reel :
+ *   a.ft-staff-ht   { background-color: red;    color: white; }
+ *   a.ft-staff-mod  { background-color: yellow; color: black; }
+ *   a.ft-staff-gm   { background-color: orange; color: black; }
+ *   a.ft-staff-la   { background-color: white;  color: green; }
+ *   a.ft-staff-chpp { background-color: green;  color: white; }
+ * Aucun `!important` cote FoxTrick. La regle de surface ci-dessus, en (0,2,1) avec
+ * !important, les ecrasait toutes — le pseudo retombait sur --ht-surface-2 et
+ * --ht-fg, un badge muet parmi les autres liens.
+ *
+ * Rappel general (CSS pur, sans JavaScript) : impossible de cibler un pseudo par son
+ * TEXTE (« commence par HT- ») — CSS n'a aucun selecteur de contenu. Ce theme ne
+ * fonctionne que parce que FoxTrick a deja fait ce travail cote extension et pose la
+ * classe `.ft-staff-*` sur le lien ; on ne fait que la laisser gagner. Sans cette
+ * classe, la demande serait irrealisable en CSS seul.
+ *
+ * Couleurs de FoxTrick RETINTEES, pas reprises telles quelles : au premier essai (rouge
+ * et jaune purs) elles ressortaient trop criardes sur fond sombre, et GM en orange pur posait un vrai
+ * probleme de lecture. Chaque badge garde la teinte d'origine — c'est elle qui porte
+ * le role — assombrie sur le meme principe que `.review-match-won/lost/tied` : fond
+ * fonce, texte clair de la meme famille. Cinq couleurs verifiees deux a deux pour
+ * rester distinguables (5.4 a 12.5:1) ; MOD et GM sont les deux plus proches en teinte
+ * d'origine (jaune/orange) et ont ete ecartees expres, l'un vers l'olive, l'autre vers
+ * la brique. Classe doublee pour depasser (0,2,1) sans dependre de l'ordre de
+ * chargement. */
+a.ft-staff-ht.ft-staff-ht {
+  background-color: #5c2020 !important; /* remplace rouge pur */
+  color: var(--ht-on-accent-light) !important;
+}
+
+a.ft-staff-mod.ft-staff-mod {
+  background-color: #4a4012 !important; /* remplace jaune pur */
+  color: #f0e6a8 !important;
+}
+
+a.ft-staff-gm.ft-staff-gm {
+  background-color: #6b3312 !important; /* remplace orange pur — lecture en cause */
+  color: #f5b078 !important;
+}
+
+a.ft-staff-la.ft-staff-la {
+  background-color: var(--ht-ok-bg) !important; /* remplace blanc/vert */
+  color: #8fd98f !important;
+}
+
+a.ft-staff-chpp.ft-staff-chpp {
+  background-color: #204a2e !important; /* remplace vert pur */
+  color: var(--ht-on-accent-light) !important;
+}

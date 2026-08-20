@@ -1,0 +1,20 @@
+# Systeme
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Sorties de build — regenerables, jamais commitees
+/dist/
+*.zip
+*.xpi
+
+# Editeurs
+.vscode/
+.idea/
+*.swp
+*~
+
+# Secrets — ne doivent JAMAIS etre commitees
+*.pem
+.env
+web-ext-artifacts/

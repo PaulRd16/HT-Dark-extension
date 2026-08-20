@@ -1,0 +1,73 @@
+/* HT Dark — base.
+ *
+ * Fond global, texte, liens, controles natifs. Volontairement conservateur :
+ * tant que les pages connectees n'ont pas ete inspectees, on ne cible que ce qui
+ * est certain. Le reste arrive dans 03-components.css et 04-pages.css.
+ */
+
+/* La ligne la plus rentable du fichier. Elle indique au navigateur que la page est
+ * sombre : les controles natifs (cases, listes deroulantes, champs), les barres de
+ * defilement et la couleur de fond par defaut basculent tout seuls, sans qu'on ait
+ * a les styler un par un. */
+/* `scrollbar-color` est une propriete HERITEE : la poser sur :root suffit, elle
+ * descend sur les panneaux a defilement interne. Elle etait auparavant sur `*`,
+ * ce qui la recalculait sur chaque element du document sans rien apporter. */
+:root {
+  color-scheme: dark;
+  scrollbar-color: var(--ht-line-strong) var(--ht-bg);
+}
+
+html,
+body {
+  background-color: var(--ht-bg) !important; /* neutralise le fond du theme de club */
+  color: var(--ht-fg);
+}
+
+/* Hattrick pose une image de fond issue du theme de club (/img/ClubTheme/backgrounds/).
+ * On la retire : la couleur d'equipe reviendra en accent, pas en tapisserie. */
+body {
+  background-image: none !important;
+}
+
+/* Liens. Hattrick redefinit la couleur sur beaucoup de composants ; ceci n'est que
+ * la valeur par defaut, les cas particuliers seront traites apres inspection. */
+a,
+a:link,
+a:visited {
+  color: var(--ht-link);
+}
+
+/* `!important` indispensable ici : Hattrick pose `a:hover { color: rgb(141,141,28) }`
+ * a la meme specificite (0,1,1) et sa feuille est chargee apres la notre. Cet olive
+ * est concu pour un fond clair ; sur nos surfaces il donne 3.99:1 alors que le lien
+ * au repos est a 8.5 — le survol DEGRADAIT la lisibilite au lieu de la renforcer. */
+a:hover,
+a:focus,
+a:hover .linkstyle {
+  color: var(--ht-link-hover) !important;
+}
+
+/* Titres et texte secondaire.
+ * `h1` et `h2` ne figurent pas ici : 03-components.css les traite a la source, en
+ * !important, pour rattraper l'olive et le gris que Hattrick leur pose. Les declarer
+ * ici aussi ne servait a rien — la valeur etait ecrasee dans tous les cas.
+ * Meme raison pour `.shy`, repris avec !important dans la passe de contraste. */
+h3,
+h4 {
+  color: var(--ht-fg);
+}
+
+small,
+.subtext {
+  color: var(--ht-fg-dim);
+}
+
+::selection {
+  background: var(--ht-accent);
+  color: #0d1114;
+}
+
+/* Separateurs */
+hr {
+  border-color: var(--ht-line);
+}

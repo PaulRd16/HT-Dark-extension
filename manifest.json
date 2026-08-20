@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "HT Dark",
+  "version": "1.0.0",
+  "description": "Thème sombre pour Hattrick qui conserve la couleur de chaque équipe comme accent. CSS uniquement, aucun JavaScript.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.hattrick.org/*"
+      ],
+      "css": [
+        "css/01-palette.css",
+        "css/02-base.css",
+        "css/03-components.css",
+        "css/04-pages.css",
+        "css/05-foxtrick.css",
+        "css/06-dhth.css",
+        "css/07-skillvalue.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}

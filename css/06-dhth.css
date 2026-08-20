@@ -1,0 +1,27 @@
+/* HT Dark — regles ciblant dhth.
+ *
+ * dhth est une extension tierce qui ajoute un simulateur de match et des panneaux
+ * d'analyse.
+ *
+ * Ce fichier est INERTE si dhth n'est pas installe.
+ */
+
+/* Barre de possession du simulateur. Les couleurs portent la donnee : on n'y touche
+ * pas, on corrige le texte pose dessus, qui etait clair sur clair. Pendant exact du
+ * traitement applique a `.possession-home span` de Hattrick, dans 04-pages.css. */
+.dhth-mi-possession-home,
+.dhth-mi-possession-away,
+.dhth-mi-possession-draw {
+  color: var(--ht-on-accent) !important;
+}
+
+/* Panneaux et boutons poses sur le vert clair rgb(121,167,119) de Hattrick. Hattrick
+ * y met du blanc, soit 2.76:1 ; sur un aplat clair il faut du texte sombre — 6.36:1.
+ * Le fond ne bouge pas, il porte l'information (point 7). */
+#dhth-best-players-display,
+#dhth-best-players-display h3,
+#dhth-simulate-match,
+#dhth-simulate-match span,
+#dhth-calculate-current-outcome {
+  color: var(--ht-on-accent) !important;
+}

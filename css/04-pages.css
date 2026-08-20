@@ -1,0 +1,1308 @@
+/* HT Dark — correctifs par page.
+ *
+ * ============================================================================
+ * DECISION PRISE : l'accent d'equipe ne demande aucun code
+ * ============================================================================
+ * L'inspection du 15/08/2026 a tranche les trois options envisagees. Aucune n'est
+ * necessaire : Hattrick pose deja la couleur de chaque equipe, en !important, via
+ * un bloc <style> genere par page, sur #menu et .boxHead / .header-icon.
+ *
+ * Il suffit donc de NE PAS toucher ces selecteurs (voir l'en-tete de
+ * 03-components.css). Consequences :
+ *   - aucun JavaScript, l'extension reste incapable de lire les pages ;
+ *   - aucune regle par equipe a maintenir ;
+ *   - fonctionne pour la sienne comme pour n'importe quelle equipe adverse ;
+ *   - survit a un changement de theme dans les reglages du jeu.
+ *
+ * A noter : les pages sans equipe (forums, monde) n'ont pas de bloc <style> du tout
+ * et retombent sur le vert Hattrick par defaut. C'est le comportement d'origine.
+ * ============================================================================
+ */
+
+/* ===========================================================================
+ * FORUMS — releve du 15/08/2026 sur /Forum/?actionType=refresh
+ *
+ * La page la plus abimee du site en mode sombre : Hattrick y empile des surfaces
+ * claires que Standard_darkbg.css ne touche pas. Les rapports de contraste notes
+ * ci-dessous sont ceux mesures AVANT correction.
+ * =========================================================================== */
+
+/* --- Citations dans les messages ------------------------------------------ */
+/* Le pire cas de tout le site : 1.08:1, du texte clair sur fond clair. Les
+ * citations imbriquees s'eclaircissent par paliers dans le theme d'origine
+ * (235,238,235 puis 212,216,214 puis 193,197,196) ; on reproduit cette
+ * progression en sombre pour garder la lecture des enfilades. */
+blockquote.quote {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+  /* Filet vertical en box-shadow plutot qu'en border-left : pas de decalage. */
+  box-shadow: inset 3px 0 0 var(--ht-line-strong);
+}
+
+blockquote.quote blockquote.quote {
+  background-color: var(--ht-surface-3) !important;
+}
+
+blockquote.quote blockquote.quote blockquote.quote {
+  background-color: #3b464f !important;
+}
+
+/* Ligne « X a ecrit : » en tete de citation */
+.quoteto {
+  color: var(--ht-fg-dim) !important;
+}
+
+/* --- Spoilers --------------------------------------------------------------- */
+/* Fond rgb(238,226,226) et bordure rgb(204,153,153) : du rose pale qui portait notre
+ * texte clair a 1.00:1 — les deux couleurs etaient identiques. Meme traitement que
+ * les messages supprimes : on descend le rose au lieu de l'aplatir, puisqu'il
+ * signale « attention, contenu masque ».
+ *
+ * Le prefixe `blockquote` porte a (0,1,1) et passe devant la regle du site en (0,1,0).
+ * Le contenu revele garde le texte normal ; seul le lien d'ouverture, enfant direct,
+ * prend la teinte rose — c'est lui qui porte l'avertissement. */
+blockquote.spoiler {
+  background-color: var(--ht-removed-bg) !important;
+  border-color: #7a4a4e !important;
+  color: var(--ht-fg) !important;
+}
+
+blockquote.spoiler > a {
+  color: var(--ht-removed-fg) !important;
+}
+
+/* --- Listes de fils et de dossiers ----------------------------------------- */
+/* Les lignes etaient en blanc pur (threadItem) ou en 240,240,240 (folderitem).
+ * On garde le zebrage, qui porte la lisibilite de ces tableaux tres denses. */
+tr.threadItem,
+tr.folderitem,
+tr.threadItem.odd,
+tr.folderitem.odd {
+  background-color: var(--ht-surface) !important;
+}
+
+tr.threadItem.even,
+tr.folderitem.even {
+  background-color: var(--ht-surface-2) !important;
+}
+
+/* --- Tableaux postes dans les messages (htMlTable) ------------------------- */
+/* Le pire cas des fils de discussion : 1.53:1 sur la colonne d'en-tete.
+ *
+ * Standard_main_11.css pose `table.htMlTable th { background-color: rgb(204,204,204)
+ * !important }` en specificite (0,1,2). Un `th.ft-dummy` (0,1,1) perd malgre son
+ * !important — a !important egal, c'est la specificite qui tranche. D'ou la classe
+ * doublee ci-dessous, qui monte a (0,2,2) sans dependre du contexte : elle marche
+ * aussi bien dans un message que dans une previsualisation. */
+table.htMlTable.htMlTable th {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+  border-color: var(--ht-line) !important;
+}
+
+table.htMlTable.htMlTable td,
+table.htMlTable.htMlTable {
+  border-color: var(--ht-line) !important;
+}
+
+/* Separateur horizontal dans les messages : gris 128,128,128 d'origine. */
+.hattrick-ml hr {
+  border-color: var(--ht-line-strong) !important;
+}
+
+/* --- En-tetes de dossier --------------------------------------------------- */
+/* Standard_main_11.css marque les dossiers particuliers par un aplat plein :
+ *   .folderHeaderHighlight { background-color: rgb(255,232,232) !important }  (rose)
+ *   .folderHeaderPublic    { background-color: rgb(216,255,216) !important }  (vert)
+ *
+ * Deux problemes. D'abord la specificite : ces regles sont en (0,1,0) comme les
+ * notres, mais leur feuille est chargee APRES, donc a egalite elles gagnent — d'ou
+ * le prefixe `div` ci-dessous, qui passe en (0,1,1).
+ *
+ * Ensuite le rendu : un pavé plein pour distinguer un dossier est trop bruyant sur
+ * une colonne qui en compte des dizaines. On garde la mise en exergue, mais sous
+ * forme d'un filet vertical de 3 px — meme code couleur, sans l'aplat. */
+/* Le titre de dossier a son PROPRE niveau de surface. Premier essai rate :
+ * --ht-surface-2 le rendait identique aux lignes .threadItem.even, si bien qu'un
+ * dossier commencant par une ligne paire, suivi du dossier suivant, donnait trois
+ * bandes de la meme valeur d'affilee. La hierarchie est donc :
+ *   titre de dossier   --ht-surface-3  (#313b43)
+ *   ligne paire        --ht-surface-2  (#272f36)
+ *   ligne impaire      --ht-surface    (#1f252b) */
+div.folderHeader,
+div.folderHeaderHighlight,
+div.folderHeaderPublic {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+  border-bottom-color: var(--ht-line-strong) !important;
+}
+
+/* Dossier a lire — ambre */
+div.folderHeaderHighlight {
+  box-shadow: inset 3px 0 0 var(--ht-warn);
+}
+
+/* Forum public — vert */
+div.folderHeaderPublic {
+  box-shadow: inset 3px 0 0 var(--ht-accent);
+}
+
+/* Retrait des fils sous leur dossier : la difference de surface porte deja la
+ * hierarchie, le decalage la rend lisible d'un coup d'oeil. Applique a la premiere
+ * cellule plutot qu'a la table, pour que les lignes gardent toute leur largeur —
+ * une marge sur table.threadList la ferait deborder de sa colonne. */
+/* Sans !important : la regle du site est `.subMenuBox table.threadList td` en (0,2,2),
+ * la notre est en (0,3,2) et passe devant sans forcer. Le CLAUDE.md annonce que les
+ * quatre entorses a la mise en page sont toutes sans !important — c'est vrai
+ * maintenant. */
+.forumFolder table.threadList td:first-child {
+  padding-left: 12px;
+}
+
+/* --- Blocs de fils (cf*) --------------------------------------------------- */
+/* Ce sont eux qui rendaient illisibles les ~50 liens verts a 1.46:1 : le lien
+ * etait correct, c'est le fond qui etait reste clair.
+ *
+ * Structure d'un message : .cfWrapper > .cfHeader (« #1: », auteur, date, actions)
+ * + .cfInnerWrapper (avatar et texte) + .cfFooter. Un fil en compte facilement 20,
+ * tous au meme fond dans le theme d'origine : rien ne separe un message du suivant.
+ *
+ * On en fait donc une vraie boite : anneau autour du message entier, barre de titre
+ * distincte pour l'en-tete, et un peu d'air entre les messages. La marge est la
+ * seule propriete de mise en page du theme, et elle est posee sans !important —
+ * une boite sans separation ne se lit pas comme une boite. */
+.cfWrapper {
+  background-color: var(--ht-surface) !important;
+  box-shadow: var(--ht-ring);
+  margin-bottom: 10px;
+}
+
+/* Barre de titre : les « donnees du message » (numero, auteur, date, actions).
+ *
+ * Le filet est en box-shadow inset, pas en border. Verification faite dans
+ * Standard_main_11.css : `.cfHeader` n'a QUE `background`, `line-height`, `padding` et
+ * `color` — aucune bordure. La forme raccourcie `border-bottom: 1px solid` en ajoutait
+ * donc une qui n'existait pas, et poussait chaque message de 2 px sur une page qui en
+ * compte une vingtaine. C'est exactement ce que le point 8 interdit, et ce n'etait pas
+ * une des quatre entorses declarees. */
+.cfHeader {
+  background-color: var(--ht-surface-2) !important;
+  box-shadow: inset 0 -1px 0 var(--ht-line);
+}
+
+.cfFooter {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg-dim) !important;
+  box-shadow: inset 0 1px 0 var(--ht-line);
+}
+
+/* Le jaune 254,251,200 marque un fil suivi ET un utilisateur suivi (« Bookmarked
+ * User », meme classe reutilisee pour les deux) : signal conserve, en ambre sombre —
+ * assez soutenu pour ressortir sur la page, sans redevenir un aplat criard.
+ *
+ * CLASSE DOUBLEE, indispensable : verifie sur la page, la regle etait sans effet.
+ * Hattrick pose `.cfBookmarked { background-color: rgb(254,251,200) !important }`,
+ * (0,1,0) — EXACTEMENT la meme specificite que la notre, et sa feuille est chargee
+ * apres. A egalite, c'est elle qui gagnait : le bandeau restait couleur crayon jaune
+ * vif. Meme piege que `.htbox-light` (point 4 du CLAUDE.md), jamais applique ici. */
+.cfBookmarked.cfBookmarked {
+  background-color: var(--ht-marked-bg) !important;
+  color: var(--ht-warn) !important;
+}
+
+/* Message supprime. Le rose rgb(255,204,204) du site portait notre texte clair a
+ * 1.13:1. On reste dans les tons roses — c'est le code couleur de la suppression —
+ * en descendant le fond et en remontant le texte : 7.9:1.
+ *
+ * Prefixe `div` obligatoire : Standard_main_11.css pose ce fond en
+ * `.cfDeleted { background-color: rgb(255,204,204) !important }`, soit (0,1,0)
+ * comme nous, et sa feuille est chargee apres — a egalite, c'est elle qui gagne.
+ * Un premier essai sans le prefixe n'avait applique que la couleur de texte, ce qui
+ * avait DEGRADE le contraste a 1.24. */
+div.cfDeleted,
+div.cfDeletedExt {
+  background-color: var(--ht-removed-bg) !important;
+  color: var(--ht-removed-fg) !important;
+}
+
+.cfDeleted a,
+.cfDeletedExt a {
+  color: #f5c9c9 !important;
+}
+
+/* --- Pagination ------------------------------------------------------------- */
+/* Les onglets `.forumTabs` sont traites avec les cinq autres systemes d'onglets du
+ * site, dans 03-components.css. */
+.pager a,
+.pager a.page {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* --- Listes deroulantes ---------------------------------------------------- */
+/* Le defaut sur `option` est site-wide et vit desormais dans 03-components.css, avec
+ * les autres controles de formulaire. Ne reste ici que l'exception propre au forum :
+ * le vert 216,255,216 qui distingue les forums publics, conserve et assombri. */
+option.highlightBrowsePublicForum {
+  background-color: var(--ht-green-soft) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* --- Bulle de notation de page --------------------------------------------- */
+.hfBubble {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* ===========================================================================
+ * LISTE DES MATCHS — releve du 15/08/2026 sur /Club/Matches/
+ * =========================================================================== */
+
+/* Les cartes de match mises en avant. Hattrick y encode le resultat par la couleur
+ * de fond, ce qui produit deux blocs de valeurs differentes cote a cote :
+ *   .important-match-content                       rgb(255,255,255)            a venir
+ *   .important-match-won .important-match-content  rgb(224,231,225) !important gagne
+ *
+ * En clair la nuance se lit ; en sombre, un blanc et un vert tres pale voisins ne
+ * se lisent plus comme deux statuts, seulement comme deux blocs mal assortis. On
+ * conserve donc le codage en le ramenant dans la gamme sombre.
+ *
+ * Le prefixe `div` sur les variantes est necessaire : la regle du site est en
+ * (0,2,0) avec !important et sa feuille est chargee apres la notre. */
+.important-match-content {
+  background-color: var(--ht-surface-2) !important;
+}
+
+div.important-match-won .important-match-content {
+  background-color: var(--ht-green-panel) !important; /* remplace rgb(224,231,225) */
+}
+
+div.important-match-lost .important-match-content {
+  background-color: #31201f !important;
+}
+
+div.important-match-draw .important-match-content {
+  background-color: var(--ht-surface-3) !important;
+}
+
+.important-match-wrapper,
+.important-match {
+  border-color: var(--ht-line) !important;
+}
+
+/* Sous-titre de la carte (« Round 4 in VI.526 ») : rgb(51,51,51), soit 1.10:1 une
+ * fois la carte assombrie. Texte secondaire, donc --ht-fg-dim : 5.6:1. */
+.important-match-subtitle {
+  color: var(--ht-fg-dim) !important;
+}
+
+/* ===========================================================================
+ * VISIONNEUSE DE MATCH — releve du 15/08/2026 sur Club/Matches/Match.aspx
+ *
+ * Page batie sur des composants web (ht-live, ht-matchevent, hattrick-rating...),
+ * tous en mode « scoped » et donc atteignables par du CSS ordinaire.
+ * =========================================================================== */
+
+/* --- Commentaire en direct -------------------------------------------------- */
+/* Le pire cas de tout le site : bulles en rgb(238,238,238) portant du texte clair,
+ * soit 1.09:1 sur 54 elements. Le commentaire etait purement et simplement efface. */
+.live-bubble {
+  background-color: var(--ht-surface-2) !important;
+}
+
+/* Pastille de minute. Les variantes domicile / exterieur portent un code couleur
+ * (bleu rgb(110,205,234)) qui distingue les equipes : on le conserve et on se
+ * contente d'y poser un texte sombre. Seule la pastille neutre, en blanc, est
+ * assombrie. */
+.live-bubble-container:not(.live-bubble-home):not(.live-bubble-away) .matchMinute {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+.live-bubble-home .matchMinute,
+.live-bubble-away .matchMinute {
+  color: var(--ht-on-accent) !important;
+}
+
+/* `.local-link` (numero de minute, icone de temps additionnel) porte SA PROPRE
+ * couleur, posee par Hattrick directement sur le `span`/`i` : `.local-link {
+ * color: rgb(0,0,0) }`. Une regle qui vise un element porte toujours sur une couleur
+ * simplement heritee d'un ancetre — les deux regles ci-dessus, qui ne touchent QUE
+ * `.matchMinute`, ne l'atteignent donc jamais.
+ *
+ * Sur les variantes domicile/exterieur (rouge, cyan), ce noir natif reste lisible
+ * (5.5 et 8+:1) — ne pas y toucher, Hattrick a deja fait le bon choix. Seule la
+ * variante NEUTRE echoue, puisque son fond est justement celui qu'on assombrit
+ * juste au-dessus : 1.84:1 avant correction. */
+.live-bubble-container:not(.live-bubble-home):not(.live-bubble-away) .matchMinute .local-link {
+  color: var(--ht-fg) !important;
+}
+
+/* --- Notes des joueurs ----------------------------------------------------- */
+/* 22 encarts blancs dans les cartes retournables. */
+hattrick-rating {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* --- Faits marquants ------------------------------------------------------- */
+/* Texte noir laisse sur fond desormais sombre : 1.36:1. */
+.matchHighlight .highlightMinute,
+.matchHighlight .local-link {
+  color: var(--ht-fg) !important;
+}
+
+/* --- Barre de possession --------------------------------------------------- */
+/* Les couleurs portent la donnee : on n'y touche pas, on corrige le texte pose
+ * dessus, qui etait clair sur clair. Vaut aussi pour l'extension dhth.
+ *
+ * Le cote AWAY (rouge rgb(209,94,94)) est separe du reste : mesure faite en
+ * composant correctement les couches translucides (`ht-possession-bar` pose CE
+ * fond a deux opacites, 1 et 0.7, sans que la sonde naive s'en apercoive — elle
+ * traite toute couche a alpha > 0.5 comme opaque). Une fois le melange reel calcule :
+ *
+ *   away opaque (15 occurrences)      #10222b -> 4.26:1   sous le seuil
+ *   away translucide (3 occurrences)  #10222b -> 3.14:1   sous le seuil
+ *
+ * Le cote HOME (cyan) n'a jamais ce probleme : 9.0 et 6.0:1 dans les deux cas.
+ *
+ * `#0a0a0a` (deja utilise sur le marche des transferts pour le meme rouge en
+ * `.bar-level.verylow`) releve le cas majoritaire, opaque, a 5.16:1. Le cas
+ * translucide reste sous la cible a 3.82 — verifie qu'AUCUNE couleur de texte ne
+ * l'atteint, le noir pur lui-meme ne donne que 4.06 sur ce fond compose. Compromis
+ * assume, dans l'esprit deja pratique ailleurs sur `.league-qualdown` : trois
+ * occurrences rares, sur un fond que le texte ne peut pas sauver seul. */
+.possession-home span {
+  color: var(--ht-on-accent) !important;
+}
+
+.possession-away span {
+  color: var(--ht-on-red) !important;
+}
+
+/* --- Score du tableau d'affichage ------------------------------------------ */
+/* rgb(38,127,48) sur l'en-tete vert : 1.83:1. Le blanc monte a 2.78, ce qui reste
+ * le maximum atteignable sans toucher au fond — cf. la note sur .boxHead ci-dessous. */
+.live-scoreboard-score {
+  color: var(--ht-on-accent-light) !important;
+}
+
+/* --- Conteneurs et contreoles restes clairs -------------------------------- */
+.live-left-container {
+  background-color: var(--ht-bg) !important;
+}
+
+.bench-button {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+.playerSprite .playerNumber {
+  color: var(--ht-fg) !important;
+}
+
+/* --- Listes de joueurs deplacables ----------------------------------------- */
+/* ATTENTION au perimetre. `.beach-players` sert A LA FOIS aux lignes de la liste de
+ * droite ET aux jetons de joueurs poses sur le terrain. Une premiere version ciblait
+ * la classe seule : les joueurs du terrain se sont retrouves avec un rectangle noir
+ * derriere eux. Ne cibler que `.cdk-drag-handle.beach-players`, qui identifie les
+ * lignes de liste ; les jetons du terrain doivent rester transparents. */
+/*
+ * `:not(.highlighted-player)` est indispensable — meme precedent que
+ * `.htbox-light:not(.htbox-highlight)` : la ligne selectionnee est peinte en vert par
+ * Hattrick, et cet aplat l'effacait. L'exclusion suffirait a la faire reapparaitre ;
+ * la regle de selection plus bas repose quand meme la couleur, pour couvrir le survol
+ * que le site ne peint que sous conditions. */
+.cdk-drag-handle.beach-players:not(.highlighted-player) {
+  background-color: var(--ht-surface) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Signalement de l'etat des joueurs. Hattrick le porte par la BORDURE GAUCHE, avec
+ * un fond uniforme :
+ *   3px rgb(255,192,0) ambre  -> has-training-fullspeed / -halfspeed
+ *   3px rgb(0,204,255) cyan   -> has-training / -half
+ *   1px rgb(204,204,204)      -> aucun etat
+ *
+ * Une premiere version posait des fonds derives des classes d'entrainement, sans
+ * rapport avec le decoupage des bordures : deux signaux concurrents, donc aucun
+ * lisible. On accorde desormais le fond a la couleur de la bordure, ce qui renforce
+ * le signal d'origine au lieu d'en ajouter un. Les bordures elles-memes ne sont pas
+ * touchees : ce sont elles qui portent l'information. */
+.cdk-drag-handle.has-training-fullspeed,
+.cdk-drag-handle.has-training-halfspeed {
+  background-color: #332b16 !important; /* accorde a l'ambre */
+}
+
+.cdk-drag-handle.has-training,
+.cdk-drag-handle.has-training-half {
+  background-color: #16303a !important; /* accorde au cyan */
+}
+
+/* --- Statut du joueur dans la liste : c'est le FOND qui le porte -------------- */
+/* Releve du 16/08/2026 sur les ordres d'une equipe jeune. Sur la MEME ligne, Hattrick
+ * distingue quatre etats, tous par le fond, et aucun avec !important :
+ *
+ *   .beach-players                rgb(255,255,255)   non retenu        (0,1,0)
+ *   .beach-players-on-bench       rgb(204,204,204)   sur le banc       (0,2,0)
+ *   .beach-players-on-field       gray               dans le onze      (0,2,0)
+ *   .highlighted-player           rgb(51,107,49)     selectionne       (0,2,0)
+ *
+ * Notre regle de base, en (0,2,0) mais en !important, gagnait sur les quatre : un seul
+ * aplat pour quatre etats. Cas d'ecole du point 4 — la regle perdante l'etait
+ * silencieusement, rien ne signalait la perte d'information.
+ *
+ * On rend un niveau a chacun en suivant l'ordre du site : plus le joueur est engage
+ * dans la composition, plus sa surface monte. Ces regles sont en (0,3,0), donc au-dessus
+ * des teintes d'entrainement ci-dessus (0,2,0) : un joueur deja place n'a plus besoin
+ * que son fond rappelle son entrainement, sa bordure gauche continue de le dire. */
+.players-list .cdk-drag-handle.beach-players-on-bench {
+  background-color: var(--ht-surface-2) !important;
+  border-color: var(--ht-line-strong) !important;
+}
+
+.players-list .cdk-drag-handle.beach-players-on-field {
+  background-color: var(--ht-surface-3) !important;
+}
+
+/* Les lignes neutres portaient un lisere rgb(204,204,204) a 9.8:1 sur notre fond, quand
+ * le vert de selection n'etait qu'a 2.47 : les lignes SANS information criaient plus
+ * fort que la ligne marquee. On les calme, sans toucher a la largeur (point 8).
+ *
+ * `.beach-players-on-bench` n'est PAS exclu, contrairement a une premiere version : le
+ * banc recoit de Hattrick le meme rgb(204,204,204) qu'une ligne sans etat, ce lisere ne
+ * porte donc aucune information et il ressortait a 8.46:1 — au-dessus de la selection.
+ * Mesure faite, corrigee ; la regle `-on-bench` ci-dessus lui rend un filet propre.
+ *
+ * `-on-field` reste exclu : Hattrick lui donne gray rgb(128,128,128), une valeur
+ * DIFFERENTE de 204, donc un vrai signal, deja a 2.89:1 sur son fond.
+ *
+ * `[class*="has-training"]` protege les bordures ambre et cyan de la liste senior, qui
+ * sont le signal d'entrainement. C'est une famille de classes documentee et stable, pas
+ * un hachage Angular. */
+.players-list .cdk-drag-handle.beach-players:not([class*="has-training"]):not(.beach-players-on-bench):not(.beach-players-on-field):not(.highlighted-player) {
+  border-color: var(--ht-line) !important;
+}
+
+/* Selection et survol. En (0,4,0), donc au-dessus de la regle `-on-field` ci-dessus
+ * (0,3,0) : un joueur selectionne l'est quelle que soit sa place, sans dependre de
+ * l'ordre d'ecriture.
+ *
+ * Le fond du survol est pose par nous et pas laisse au site : Hattrick ne le peint que
+ * sous `#ngMatchorder:not(.force-expanded-player):not(.ht-is-touch)`, et hors de ces
+ * conditions la ligne retomberait sur son blanc d'origine.
+ *
+ * Le filet reprend le vert clair des liens : mesure a 3.37:1 sur l'aplat de selection.
+ * C'est lui qui fait ressortir la ligne — le fond seul ne se detache que de 1.79 face a
+ * --ht-surface-3, ce qui ne suffisait pas. */
+.players-list .cdk-drag-handle.beach-players.highlighted-player,
+.players-list .cdk-drag-handle.beach-players:hover {
+  background-color: var(--ht-select) !important;
+  border-color: var(--ht-link) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* --- Onglets de l'assistant : la variante « wizard » ------------------------ */
+/* `ul.ht-tabs-wizard` est une declinaison de `.ht-tabs`, traite avec les quatre
+ * systemes d'onglets dans 03-components.css. Elle demande deux exceptions.
+ *
+ * L'etape COURANTE presente la signature decrite au point 4 : une propriete prend et
+ * l'autre non. Hattrick pose
+ *   `.ht-tabs-wizard[_nghost] [ht-tab].ht-tabs-item-selected`, soit (0,4,0),
+ * avec `background-color: rgb(38,127,48) !important` mais une couleur de texte SANS
+ * !important. Notre regle generique, en (0,2,1), perd donc le fond et gagne le texte :
+ * notre gris clair se retrouvait sur LEUR vert, a 4.01:1, alors que leur blanc y tenait
+ * 5.09. On leur rend le blanc plutot que de disputer le fond — ce vert fonce marque
+ * l'etape en cours, c'est une information et il fonctionne tel quel.
+ *
+ * Classe doublee pour passer a (0,3,0) : (0,2,0) serait sous notre propre regle. */
+.ht-tabs-wizard .ht-tabs-item-selected.ht-tabs-item-selected,
+.ht-tabs-wizard .ht-tabs-item-selected.ht-tabs-item-selected > * {
+  color: var(--ht-on-accent-light) !important;
+}
+
+/* Le bouton de fin de barre garde un gris rgb(128,128,128) qui n'est pas atteint par
+ * `.ht-tabs > *` — celui-ci vise le `li`, pas le `button` qu'il contient. Blanc sur ce
+ * gris : 3.95:1. Le gris ne porte aucune information, c'est une surface : on
+ * l'assombrit. Texte secondaire, qui convient qu'il soit actif ou desactive — 4.65:1. */
+.ht-tabs-wizard button {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg-dim) !important;
+}
+
+/* --- Textes poses sur les deux verts de la page ----------------------------- */
+/* La page superpose deux verts de Hattrick, qui n'appellent pas le meme traitement.
+ * Ni l'un ni l'autre n'est une couleur d'equipe : verifie sur une equipe dont le
+ * theme est JAUNE, alors que ces deux fonds restent verts. Leurs regles
+ * viennent de styles.css et du bloc <style> de la page, avec des valeurs fixes.
+ *
+ * 1. Le vert CLAIR rgb(121,167,119) — bandeau `.htbox-footer`, liste des formations,
+ *    et panneaux d'extensions tierces. Hattrick y pose du blanc : 2.76:1. Aplat clair,
+ *    donc texte sombre, exactement comme les pastilles de classement. 6.36:1.
+ *    Les fonds ne bougent pas : c'est le point 7, l'aplat porte l'information.
+ *
+ *    Attention a ne pas elargir a `.htbox-footer *` : `.mo-formation`, qui vit dedans,
+ *    a son PROPRE vert fonce rgb(38,127,48) ou le blanc tient deja 5.09:1. Seule sa
+ *    liste depliante retombe sur le vert clair. */
+.htbox-footer label,
+.mo-formation-list,
+.mo-formation-list div,
+.mo-formation-list-formation {
+  color: var(--ht-on-accent) !important;
+}
+
+/* 2. Le vert FONCE rgb(63,113,54) — le terrain et les encarts poses dessus. Ici les
+ *    deux defauts sont les NOTRES, pas ceux du site :
+ *
+ *      .mo-field-rating-predicitons-controls a   Hattrick y met rgb(238,255,238),
+ *        notre regle `.boxBody a` le remplace par le vert de lien   -> 3.05:1
+ *      #ft_simulation_ratings-new h2             notre regle large sur `h2`
+ *        y pose --ht-green-head, du vert sur du vert                -> 2.79:1
+ *
+ *    Le second est le rappel du point 6 : une regle large exige ses exceptions, et il
+ *    faut verifier sur quel fond vit un texte avant de lui donner une couleur. */
+.mo-field-rating-predicitons-controls a {
+  color: var(--ht-on-accent-light) !important;
+}
+
+/* Le numero du tireur de penalty reste a 3.33:1 : c'est rgb(148,210,173), la couleur
+ * que Hattrick a lui-meme choisie pour le terrain, identique en mode clair. Ce n'est
+ * pas une regression du theme, on n'y touche pas. */
+
+/* Les notes par secteur sont communes aux ordres de match et a l'analyse d'equipe :
+ * elles sont traitees dans 03-components.css. */
+
+/* --- Fiche joueur flottante ------------------------------------------------- */
+/* Mesure faite fiche ouverte : le panneau est `div.focused-player-details`, en
+ * rgb(221,221,221), a l'interieur de `#floating-element`. Son fond clair portait
+ * tout son contenu a 1.08:1.
+ *
+ * NE PAS cibler ht-flip-front / ht-flip-back / ht-facecard : contrairement a ce que
+ * leur nom suggere, ce sont les enveloppes des JETONS POSES SUR LE TERRAIN, pas la
+ * fiche. Leur donner un fond sombre colle un rectangle noir derriere chaque joueur
+ * du terrain — visible seulement au repos, puisque .highlighted-player repeint en
+ * vert au survol. Erreur commise en supposant le conteneur au lieu de le mesurer. */
+.focused-player-details {
+  background-color: var(--ht-surface) !important;
+  color: var(--ht-fg) !important;
+}
+
+.last_rating_label {
+  color: var(--ht-fg-dim) !important;
+}
+
+/* --- Validateur des ordres (« Orders have been successfully saved ») --------- */
+/* Le panneau qui apparait apres validation, 300x449 en superposition. Meme
+ * architecture que les boites d'etat de 03-components.css — une base et trois
+ * variantes — mais avec des classes entierement differentes :
+ *
+ *   .mo-validator          rgb(255,255,255)   base
+ *   .mo-validator-success  rgb(140,191,138)   confirmation
+ *   .mo-validator-warning  rgb(255,224,102)   avertissement
+ *   .mo-validator-error    rgb(223,143,143)   erreur
+ *
+ * Les trois etats reprennent les fonds de la palette, ceux-la memes qu'utilisent
+ * `.ok`, `.alert` et `.error` : une confirmation doit avoir la meme couleur qu'on la
+ * lise ici ou sur la page d'entrainement. C'est la raison d'etre des jetons
+ * --ht-ok-bg / --ht-warn-bg / --ht-error-bg.
+ *
+ * Ces regles vivent dans le bloc <style> de la page et n'ont pas de !important. La
+ * base d'abord, les etats ensuite : a specificite egale, l'ordre tranche. */
+.mo-validator {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+.mo-validator-success {
+  background-color: var(--ht-ok-bg) !important;
+  color: var(--ht-accent) !important;
+}
+
+.mo-validator-warning {
+  background-color: var(--ht-warn-bg) !important;
+  color: var(--ht-warn) !important;
+}
+
+.mo-validator-error {
+  background-color: var(--ht-error-bg) !important;
+  color: var(--ht-danger) !important;
+}
+
+/* Hattrick pose `.mo-validator a { color: rgb(0,0,0) }` : le lien « continuer »
+ * etait noir sur le vert pale, et notre vert de lien y donnait 1.12:1. */
+.mo-validator a {
+  color: var(--ht-link) !important;
+}
+
+/* L'encart promotionnel loge dans le validateur : rgb(221,221,221), 300x366, tout son
+ * contenu a 1.08:1. Un cran plus clair que le panneau qui le contient, pour qu'il
+ * reste distinct sans redevenir un aplat lumineux. */
+.pimp-product {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* --- Carte de position (clic sur un joueur du terrain) --------------------- */
+/* `#position-details` — le panneau « <nom> / dropdown de position / Select captain,
+ * Select set-pieces taker, Remove player / Alternatives » qui s'ouvre au clic sur un
+ * joueur sur le terrain. Deux fonds clairs poses par Hattrick, jamais assombris :
+ *
+ *   #position-details              rgb(183,172,170)   corps de la carte
+ *   .position-details-options      rgb(208,208,208)   bloc dropdown + actions
+ *
+ * Rien a corriger sur le TEXTE : il porte deja les couleurs du theme — vert de lien
+ * sur « Select captain » et les alternatives, --ht-fg sur « Alternatives », le vert de
+ * titre sur le nom du joueur (herite de la regle generale sur `h2`). Ces couleurs sont
+ * concues pour un fond sombre ; assombrir les deux fonds suffit, sans toucher au texte.
+ * Mesure avant : 1.07 a 1.76:1 selon l'element. */
+#position-details {
+  background-color: var(--ht-surface-2) !important;
+}
+
+.position-details-options {
+  background-color: var(--ht-surface-3) !important;
+}
+
+/* --- Panneau « Subs / Orders » ---------------------------------------------- */
+/* Gris clairs de Hattrick : rgb(169,169,169) sur les en-tetes et pieds,
+ * rgb(229,229,229) sur le corps. Le numero d'ordre et « Substitution » y etaient a
+ * 1.00:1 — la couleur du texte etait exactement celle du fond.
+ *
+ * Prefixe `div` partout : les regles du site sur ces classes sont a specificite
+ * egale et chargees apres les notres. */
+div.mo-orders-init,
+div.mo-orders-position-old,
+div.matchorder-slider-holder {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+div.mo-order-header,
+div.mo-orders-footer {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Textes du panneau restes en noir ou en gris clair */
+.mo-orders-position-old p,
+.matchorder-slider-controller,
+.mo-orders-header-player,
+.mo-orders-header-desc,
+.mo-orders-header-title {
+  color: var(--ht-fg) !important;
+}
+
+/* Numeros de position sur le banc : rgb(64,130,60) sur le vert rgb(121,167,119),
+ * soit 1.70:1 — du vert sur du vert. La pastille garde sa couleur (elle marque la
+ * position), seul le chiffre passe en sombre : 5.7:1. */
+.mo-bench-position-number {
+  color: var(--ht-on-accent) !important;
+}
+
+/* --- Onglet Review : le noir force ------------------------------------------ */
+/* Hattrick pose `.mo-review-details * { color: rgb(0,0,0) !important }` — un
+ * selecteur universel sous une classe, donc (0,1,0). Il ecrase tout ce qui est en
+ * (0,0,1), y compris nos regles sur `select`, `input` et `textarea`.
+ *
+ * Ce noir reste correct la ou le fond est une cellule d'etat coloree (htbox-ok,
+ * htbox-warning), et il devient illisible partout ou nous avons assombri : les
+ * champs de formulaire etaient a 1.55:1, et les cellules .htbox-light le seraient
+ * aussi. On ne le neutralise donc QUE sur ces zones-la, en (0,1,1) ou (0,2,0). */
+.mo-review-details select,
+.mo-review-details option,
+.mo-review-details input,
+.mo-review-details textarea,
+.mo-review-details .htbox-light,
+.mo-review-details .htbox-light * {
+  color: var(--ht-fg) !important;
+}
+
+/* --- Onglet Review : pastilles de resultat ---------------------------------- */
+/* Les W / L / D de l'historique de l'adversaire. Fonds pastel porteurs du resultat
+ * (vert rgb(121,167,119), rose rgb(223,143,143), gris rgb(169,169,169)) avec un texte
+ * blanc a 2.35-2.76:1. On garde les fonds — ils sont l'information — et on passe la
+ * lettre en sombre : 5.7 a 6.9:1 selon la pastille. */
+.review-match-won,
+.review-match-lost,
+.review-match-tied {
+  color: var(--ht-on-accent) !important;
+}
+
+/* --- En-tete de la page ----------------------------------------------------- */
+/* Ce sous-titre est pose sur le bandeau vert de .boxHead, pas sur une surface
+ * sombre : --ht-fg-dim l'y avait fait tomber a 1.12:1. Sur ce fond, il faut du
+ * clair. Rappel general : verifier sur quel fond vit un texte avant de lui
+ * appliquer la couleur « secondaire » de la palette. */
+.matchorder-teamnames .smallText {
+  color: var(--ht-on-accent-light) !important;
+}
+
+/* ===========================================================================
+ * ENTRAINEMENT — releve du 15/08/2026 sur /Club/Training/Training.aspx
+ * =========================================================================== */
+
+/* Bandeau d'information sur la mise a jour : rgb(243,243,243), texte a 1.14:1. */
+.training-update-wrapper,
+.training-update {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Les onglets `.nav-tab` de la page sont traites avec les trois autres systemes
+ * d'onglets du site, dans 03-components.css. */
+
+/* Etiquettes « Training Intensity: 100% », « Playmaking: 84% » : rgb(243,243,243). */
+span.training-type-tag.training-type-tag {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+  border-color: var(--ht-line) !important;
+}
+
+.match-formation-inner {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* --- Barres de minutes jouees ---------------------------------------------- */
+/* Le pire cas de la page : les libelles de minute (« 86' ») etaient en blanc sur la
+ * portion blanche des barres, soit un ratio de 1.00 sur 9 elements — invisibles au
+ * sens strict. Les portions jouees gardent leur teinte verte, assombrie pour cesser
+ * d'etre un aplat lumineux.
+ *
+ * QUATRE etats, et non deux. La premiere version reunissait `partial` et `full` sous
+ * une seule declaration : les deux portions devenaient exactement du meme vert, et
+ * l'information « entrainement complet ou partiel » disparaissait purement et
+ * simplement — le defaut typique d'une regle a nous qui gagne trop et efface une
+ * distinction du site, sans que rien ne le signale.
+ *
+ * L'entrainement PARTIEL est plus clair que le COMPLET, et les deux teintes sont des
+ * verts de Hattrick : le vert profond rgb(38,127,48) qu'il emploie sur ses boutons
+ * pour l'etat plein, son vert pale rgb(121,167,119) pour l'etat incomplet.
+ *
+ * LE COUPLAGE A CONNAITRE. Au-dela de L=0.183 le libelle blanc de `.bar-section span`
+ * tombe sous 4.5:1. Un vert clair reellement distinct depasse forcement ce seuil —
+ * il n'y a pas de place pour deux verts nettement differents sous 0.183. Eclaircir
+ * `partial` OBLIGE donc a passer son libelle en sombre, d'ou la regle dediee plus bas.
+ * Une premiere version avait evite ce couplage en rapprochant les deux verts : les
+ * deux etats redevenaient indistinguables, ce qui est precisement le defaut a eviter.
+ *
+ * Les quatre etats se suivent en luminance croissante — 0.042, 0.081, 0.156, 0.356 —
+ * de sorte que la barre se lit de gauche a droite sans avoir a comparer des teintes. */
+.bar-section.none.upcoming {
+  background-color: var(--ht-surface-3) !important;
+}
+
+/* Joue, mais sans entrainement : rgb(255,255,255) d'origine, avec le libelle blanc
+ * par-dessus — 1.00:1, deux segments litteralement invisibles. Ton neutre, distinct
+ * des deux verts comme de la piste `upcoming`. */
+.bar-section.none.played {
+  background-color: var(--ht-line-strong) !important;
+}
+
+.bar-section.partial.played {
+  background-color: #79a777 !important; /* le vert pale de Hattrick, rgb(121,167,119) */
+}
+
+.bar-section.full.played {
+  background-color: var(--ht-green-deep) !important; /* le vert profond de Hattrick, rgb(38,127,48) */
+}
+
+.bar-section span {
+  color: var(--ht-on-accent-light) !important;
+}
+
+/* Seul libelle a passer en sombre : son aplat est le seul au-dessus de L=0.183.
+ * (0,3,1) contre (0,1,1) pour la regle generale ci-dessus. */
+.bar-section.partial.played span {
+  color: var(--ht-on-accent) !important;
+}
+
+/* --- Textes secondaires ----------------------------------------------------- */
+.no-training {
+  color: var(--ht-fg-dim) !important; /* rgb(82,82,82) d'origine : 1.98:1 */
+}
+
+.training-type-description,
+.training-preview-description {
+  color: var(--ht-fg-dim) !important; /* rgb(102,102,102) : 2.69:1 */
+}
+
+/* Les deux boutons jaunes (fermeture et don) sont deja a 15.7:1 : intouches. */
+
+/* ===========================================================================
+ * BOITE AUX LETTRES — releve du 15/08/2026 sur /MyHattrick/Inbox/
+ * =========================================================================== */
+
+/* Bandeau d'expediteur du message : rgb(221,221,221), avec le lien du correspondant
+ * a 1.40:1 dessus. */
+.mail-message-sender {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* ===========================================================================
+ * MESSAGERIE — releve du 15/08/2026 sur /MyHattrick/Office/Messages.aspx
+ *
+ * Page a fort volume : 152 lignes de liste et autant de noms d'expediteur.
+ * =========================================================================== */
+
+.dots-wrapper,
+li.message-center-messagelist-item,
+.message-center-message-bubble,
+.message-center-message-bubble-header {
+  background-color: var(--ht-surface) !important;
+  color: var(--ht-fg) !important;
+}
+
+.message-center-message-bubble-content {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+li.message-center-messagelist-item.selected {
+  background-color: var(--ht-surface-3) !important;
+}
+
+.message-center-separator {
+  color: var(--ht-fg-dim) !important; /* rgb(197,197,197) : 1.73:1 */
+}
+
+/* --- Coin superieur droit du message ---------------------------------------- */
+/* Etiquette de categorie (« Team News ») : rgb(239,239,239), texte a 1.10:1. */
+.message-center-message-category {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Les trois icones d'action : fond rgb(243,243,243) d'origine. */
+.box-action {
+  background-color: var(--ht-surface-2) !important;
+}
+
+/* Les pictogrammes sont des <img src="...assets/svgs/...">. Un SVG charge en <img>
+ * est opaque au CSS du document : ni `color` ni `fill` ne l'atteignent, seul un
+ * filtre agit. Ils sont dessines en sombre pour un fond clair, donc invisibles une
+ * fois le bouton assombri.
+ *
+ * Portee volontairement etroite : inverser les images du site en general detruirait
+ * les avatars, les drapeaux et les maillots. Chaque jeu d'icones se traite au cas
+ * par cas, comme prevu par la regle sur les images du CLAUDE.md. */
+.box-action img {
+  filter: invert(0.88);
+}
+
+/* Noms d'expediteur : rgb(122,122,122) a 3.60:1, sur 152 lignes. */
+.sender-name {
+  color: var(--ht-fg) !important;
+}
+
+.setting-label {
+  color: var(--ht-fg) !important;
+}
+
+/* Barre d'actions verte (« Mark all as Read »). Ce vert rgb(122,167,119) est celui
+ * de Hattrick par defaut, pas une couleur d'equipe — il ne figure pas dans le bloc
+ * de theme de club. On peut donc l'assombrir : le blanc y passe de 2.76 a 6.4:1. */
+.mark-panel {
+  background-color: #3d6640 !important;
+}
+
+/* ===========================================================================
+ * TABLEAU DE BORD — releve du 15/08/2026 sur /MyHattrick/Office/
+ *
+ * Apporte deux nouveaux jeux de classes : `.dashboard-navigation` (quatrieme
+ * systeme d'onglets du site, apres ul.tabbedList, .nav-tab et .ht-tabs) et la
+ * famille `c-*` du calendrier.
+ * =========================================================================== */
+
+/* La navigation `.dashboard-navigation` est traitee avec les trois autres systemes
+ * d'onglets du site, dans 03-components.css. */
+
+/* --- Calendrier (famille c-*) ---------------------------------------------- */
+.c-week-info,
+button.c-day {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* `.c-day.c-selected-day[NGHASH]` pese (0,3,0) avec !important ; la classe doublee
+ * porte a (0,3,1). */
+button.c-day.c-day.c-selected-day {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+.c-current-week {
+  color: var(--ht-fg) !important;
+}
+
+.c-weekday {
+  color: var(--ht-fg-dim) !important;
+}
+
+/* Fleches de semaine : fond rgb(243,243,243) portant un chevron blanc, soit 1.09:1.
+ * Deux boutons purement invisibles — le genre de defaut que seule la mesure trouve,
+ * puisqu'a l'ecran il n'y a rien a voir. */
+.c-week-navigation button {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* --- Widgets : la couleur est posee sur le CONTENEUR ------------------------ */
+/* Releve du 16/08/2026 sur /MyHattrick/Office/. Chaque widget est un composant
+ * Angular qui pose une couleur de texte sur sa LIGNE, et tout le contenu en herite.
+ * La sonde n°2 ne trouve donc aucune regle sur les textes fautifs — c'est le piege
+ * documente, et le motif est celui de `.financeDetailsBox` : traiter l'ancetre, pas
+ * les descendants. Sept declarations pour une soixantaine de textes.
+ *
+ *   .transfer-row-top   rgb(122,122,122)  3.60:1   26 echeances de transfert
+ *   .transfer-team      rgb(0,0,0)        1.36:1   27 noms d'equipe
+ *   .thread-row-top     rgb(122,122,122)  3.60:1   10 dossiers et dates de fil
+ *   .c-day-of-month     rgb(93,93,93)     2.06:1    7 numeros de jour
+ *   .c-footer-news      rgb(33,33,33)     1.19:1
+ *   .todo-staff-role    rgb(110,110,110)  3.03:1
+ *   .add-supporter      rgb(133,133,133)  3.68:1
+ *
+ * Toutes ces regles du site pesent (0,2,0) par leurs attributs d'encapsulation, et
+ * AUCUNE n'a de !important : une classe nue avec !important passe devant, sans rien
+ * doubler et sans toucher aux hachages.
+ *
+ * Selecteurs volontairement NON scopes a la page : ces widgets sont reutilisables et
+ * une classe nue les suivra partout ou Hattrick les affichera. */
+.transfer-row-top,
+.thread-row-top,
+.todo-staff-role,
+.add-supporter,
+ul.task-group .deadline {
+  color: var(--ht-fg-dim) !important;
+}
+
+/* Le nom de l'equipe est le texte principal de sa ligne et Hattrick lui donne sa
+ * propre regle. Il DESCEND de `.transfer-row-top` : sans cette seconde declaration,
+ * la regle ci-dessus le grisait au passage. Verifie sur le sous-arbre — c'est le seul
+ * enfant concerne, les autres sont bien du texte secondaire. */
+.transfer-team,
+.c-day-of-month,
+.c-footer-news {
+  color: var(--ht-fg) !important;
+}
+
+/* Le point du jour (rgb(53,176,48), 5x5 px) est un marqueur : intouche. */
+
+/* --- Bulles de texte -------------------------------------------------------- */
+/* rgb(247,247,247). Presentes dans Daily Brief (« Welcome ») et dans Messages, d'ou
+ * un traitement commun plutot qu'une regle par widget. */
+.text-bubble {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* --- Divers ----------------------------------------------------------------- */
+.unread-badge.grey-color {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+.info-row {
+  color: var(--ht-fg-dim) !important; /* rgb(122,122,122) : 3.60:1 */
+}
+
+/* ===========================================================================
+ * HATTRICK ARENA — releve du 15/08/2026 sur /Club/ArenaHub/
+ *
+ * Cette section du site a sa propre famille de composants, prefixee `casual-*`,
+ * comme `htbox-*` sur les ordres de match. Une seule surface mal themee y produisait
+ * 44 textes a 1.09:1 — leur couleur etait deja bonne, c'est le fond des cartes qui
+ * n'avait pas suivi.
+ * =========================================================================== */
+
+.casual-card,
+.myAccountCounter {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+.packageType.accountBoxDiamond {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+.casual-subtitle,
+.casual-stats-title,
+.casual-gray {
+  color: var(--ht-fg-dim) !important;
+}
+
+/* Les boutons pleins (« Challenge », « Get Instant Match ») sont traites avec ceux
+ * des autres modules, dans 03-components.css : le defaut « vert sur vert » est le
+ * meme partout. */
+
+/* Pastilles de resultats recents : aplats porteurs du resultat, assombris pour
+ * cesser d'etre lumineux sur fond sombre. */
+.recent-result-won {
+  background-color: var(--ht-green-fill) !important; /* remplace rgb(152,190,152) */
+}
+
+.recent-result-lost {
+  background-color: #7d4f4f !important;
+}
+
+.recent-result-tied,
+.recent-result-draw {
+  background-color: var(--ht-surface-3) !important;
+}
+
+/* ===========================================================================
+ * RESEAU DE RECRUTEMENT — releve du 15/08/2026 sur Youth/ScoutingNetwork.aspx
+ * =========================================================================== */
+
+/* Panneau principal en rgb(245,245,245) : 9 textes a 1.16:1. */
+.scout-table {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+a.hire-scout-trigger {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Les boutons pleins du module sont traites dans 03-components.css. */
+
+/* ===========================================================================
+ * SERIES — releve du 15/08/2026 sur /World/Series/
+ * =========================================================================== */
+
+/* Bandeau depliant « Promotion and relegation » : rgb(243,243,243). */
+.promotion-descriptions-toggle {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Le PANNEAU que ce bandeau ouvre. Il n'avait jamais ete releve, et pour une raison
+ * qui vaut d'etre notee : REPLIE, il mesure 0x0 et passe sous le filtre de taille des
+ * sondes. Le bandeau etant traite, la section avait l'air terminee.
+ *
+ * Deplie, c'est le plus gros bloc clair restant du site : 624x653, soit 407 000 px²
+ * en rgb(243,243,243), et une cinquantaine de textes a 1.14 et 1.71:1 — autrement dit
+ * tout son contenu. Une seule declaration suffit : les textes a l'interieur portent
+ * deja --ht-fg et --ht-link, ils redeviennent lisibles des que le fond descend.
+ *
+ * --ht-surface-2 et non --ht-surface : le panneau s'ouvre dans #mainBody, deja en
+ * --ht-surface, et Hattrick le pose legerement plus fonce que sa page. En sombre,
+ * l'equivalent est un cran plus clair, sans quoi le bloc disparaitrait dans la page.
+ *
+ * Rappel du point 1 : ce defaut ne se voit pas tant que le panneau est ferme. Devant
+ * un composant depliable, demander qu'on l'ouvre. */
+.promotion-descriptions {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Encarts « Preferred Series » / « Switch Series ». Composants Angular : la regle
+ * `.window-box[_ngcontent-…]` pese (0,2,0) et ses hachages sont inutilisables. Le
+ * prefixe `div` plus la classe doublee montent a (0,2,1) sans rien de volatil.
+ * Le texte y est deja clair : assombrir le fond suffit a passer de 1.14 a lisible. */
+div.window-box.window-box {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Pastille d'etat « closed » : rgb(146,146,146), texte blanc a 3.11:1.
+ * Regle du site en (0,3,0), d'ou (0,3,1) ici. */
+div.window-box .window-status.window-status {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Le bouton d'invitation `a.new-button` (vert sur vert rgb(26,114,36), 3.19:1) est
+ * traite avec les autres boutons pleins, dans 03-components.css. */
+
+/* Encart d'invitation. Encore le motif du conteneur : `.invite-shoutout` pose la
+ * couleur, ses deux div enfants en heritent et n'ont aucune regle propre. Le vert
+ * rgb(63,113,55) est celui que Hattrick reserve aux liens — le meme que traitent deja
+ * `.linkstyle` et `a[id^="ft_"]` — mais pose ici sur un `div`, il echappait a toutes
+ * nos regles visant les `a`. 2.67:1 avant, 8.55 apres. */
+.invite-shoutout {
+  color: var(--ht-link) !important;
+}
+
+/* Leurs `option` n'ont pas de regle propre : le defaut site-wide de 03-components.css
+ * les couvre deja, avec exactement les memes valeurs. */
+
+/* ===========================================================================
+ * ANALYSE D'EQUIPE — releve du 17/08/2026 sur /Club/TacticsRoom/
+ * =========================================================================== */
+
+/* Ligne du joueur en cours d'examen. C'est CE defaut qu'on voit « en passant la
+ * souris sur les joueurs » : survoler une ligne lui pose `teamanalyzer-isfocusplayer`,
+ * donc un jaune pale rgb(255,255,187) — d'ou le vert sur blanc, a 1.83:1 pour les
+ * liens et 1.22 pour le texte. La ligne reste marquee au repos, ce qui explique
+ * qu'on la trouve aussi dans un releve statique, sur 24 000 px².
+ *
+ * Le jaune signale l'element examine : on garde la teinte et on l'assombrit, avec
+ * l'ambre deja employe pour les fils suivis et la mention d'equipe nationale. Le
+ * texte y remonte a 9.9:1 et les liens a 6.6.
+ *
+ * Classe doublee : la regle du site est en (0,2,0) par son attribut d'encapsulation. */
+tr.teamanalyzer-isfocusplayer.teamanalyzer-isfocusplayer {
+  background-color: var(--ht-marked-bg) !important;
+}
+
+/* Bandes de categorie du tableau des joueurs — « Keeper », « Central Defender »,
+ * « Wing Back »... Ce sont les lignes `tr.legend`, en rgb(238,238,238), soit une
+ * LUMINANCE DE 0.855 quand le niveau le plus clair de la palette est a 0.042 : vingt
+ * fois plus lumineuses que tout ce qui les entoure, et repetees sept fois en
+ * descendant le tableau. Leur texte y tenait 2.12:1.
+ *
+ * Elles echappaient a la regle generale sur les en-tetes de tableau, qui exclut
+ * explicitement `.htbox-table` (voir 03-components.css) : cette exclusion avait ete
+ * ecrite quand les en-tetes de ces tables etaient transparents, ce qui reste vrai pour
+ * les colonnes mais pas pour ces lignes de regroupement.
+ *
+ * SELECTEUR STRUCTUREL. Une premiere version passait par `th.ft-dummy` — FoxTrick ne
+ * pose cette classe que par intermittence, si bien que la regle marchait un jour et
+ * plus le lendemain. `tr.legend` est le decoupage de Hattrick lui-meme, stable.
+ * La regle adverse, `.htbox-table[hash] tr.legend[hash]`, n'a pas de !important.
+ *
+ * --ht-surface-3, et surtout PAS --ht-surface-2 : les lignes de joueurs alternent
+ * entre L=0.027 (soit exactement --ht-surface-2) et transparent. Une bande en
+ * surface-2 aurait ete identique aux lignes paires — trois bandes de la meme valeur
+ * d'affilee, l'erreur exacte du titre de dossier decrite dans le CLAUDE.md, et sa
+ * resolution est la meme : le niveau 3 est celui des titres de regroupement. */
+table.htbox-table tr.legend th {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* ===========================================================================
+ * PORTAIL DE DISCUSSION — releve du 17/08/2026 sur /ChatPortal.aspx
+ *
+ * Page AUTONOME : `body > form#aspnetForm`, sans #menu, sans .box, sans .boxBody.
+ * Presque tout le travail des autres feuilles passe donc a cote — seul le fond de
+ * page etait sombre, par la regle sur `body`. Le reste etait intact, a commencer par
+ * `div.chat-content` et son million de pixels carres en rgb(220,226,220).
+ *
+ * Ce portail ne partage RIEN avec le module de chat embarque des pages normales :
+ * verifie, `#ngChat` et les classes `chat-*` ne coexistent jamais. Ce n'est donc pas
+ * une famille site-wide, mais elle vaut pour TOUS les salons, puisque tout est en
+ * classes et qu'aucun sélecteur ne depend du canal.
+ *
+ * SCOPE PAR `#ngChatPortal`. `.card` et `.item` sont bien trop generiques pour etre
+ * cibles a nu — c'est la regle du CLAUDE.md sur les noms generiques. Cet identifiant
+ * est stable, comme `#ngChat` et `#ngHelp` ailleurs dans le theme, et un id pese plus
+ * que les attributs d'encapsulation Angular en (0,2,0) qu'il faut battre ici. Verifie
+ * avant d'ecrire : zero `.card` et zero `.item` hors du portail.
+ * =========================================================================== */
+
+/* Fond du portail : c'est la surface de page, pas un panneau. */
+#ngChatPortal .chat-content {
+  background-color: var(--ht-bg) !important;
+}
+
+/* Colonne de gauche et panneaux : les cartes, leurs en-tetes de section et leurs
+ * lignes. Trois niveaux distincts, pour que la liste des salons reste lisible. */
+#ngChatPortal .card,
+#ngChatPortal .item {
+  background-color: var(--ht-surface) !important;
+  color: var(--ht-fg) !important;
+}
+
+#ngChatPortal .card-header {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+#ngChatPortal .item:hover {
+  background-color: var(--ht-surface-3) !important;
+}
+
+/* Champ de saisie, en blanc pur sur toute la largeur. */
+#ngChatPortal .chat-input {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* --- Bulles de message ------------------------------------------------------ */
+/* Encore une famille a trois etats, et les deux dernieres couleurs sont porteuses :
+ *   .chat-bubble                       rgb(238,238,238)  message recu — surface
+ *   .chat-message-own .chat-bubble     rgb(170,204,168)  mes messages — vert
+ *   .chat-error .chat-bubble           rgb(204,170,170)  echec d'envoi — rose
+ *
+ * Le vert et le rose sont l'information : on garde la teinte en l'assombrissant, et
+ * le rose reprend le fond d'erreur de la palette, celui de `.error` et du validateur
+ * des ordres de match. La bulle neutre, elle, n'est qu'une surface. */
+#ngChatPortal .chat-bubble {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+#ngChatPortal .chat-message-own .chat-bubble {
+  background-color: var(--ht-green-soft) !important;
+}
+
+#ngChatPortal .chat-error .chat-bubble {
+  background-color: var(--ht-error-bg) !important;
+}
+
+/* Nom de l'auteur : rgb(38,127,48), le vert de lien concu pour un fond clair. */
+#ngChatPortal .chat-message-user {
+  color: var(--ht-link) !important;
+}
+
+/* ===========================================================================
+ * MARCHE DES TRANSFERTS — releve du 18/08/2026 sur /World/Transfers/
+ *
+ * Deux natures de defaut coexistent sur cette page :
+ *
+ *  - Hattrick lui-meme, via l'attribut HTML historique `bgcolor` plutot qu'une classe
+ *    CSS — jamais rencontre ailleurs dans le theme. Specificite quasi nulle dans la
+ *    cascade, une regle en (0,1,0) suffit a passer devant.
+ *
+ *  - Le module CHPP « SkillValue », present ici sous forme d'un panneau de filtre
+ *    (#sv-transfer-filter-panel) ET d'un bouton par ligne de joueur
+ *    (button.skillValueLauncher) qui ouvre la carte deja traitee sous
+ *    #skillCalcOverlay. Contrairement a ce module modal, celui-ci pose ses couleurs
+ *    en STYLE EN LIGNE via JavaScript, sans !important — donc surmontable par un
+ *    simple `!important` externe, sans avoir besoin de doubler un identifiant.
+ * =========================================================================== */
+
+/* --- Ligne « Keeper » (attribut bgcolor natif) ------------------------------ */
+/* Hattrick signale les joueurs specialistes gardien par `<tr bgcolor="#FFDB4D">`,
+ * un jaune pale au sens propre du terme : pas une seule classe ni regle de feuille,
+ * l'attribut HTML pre-CSS. La sonde 2 ne voit donc rien — chercher `[bgcolor]` sur
+ * l'element, pas dans les feuilles, quand une couleur resiste sans regle lisible.
+ *
+ * Fond CONSERVE : c'est un drapeau semantique, identique en mode clair, couvre le
+ * point 7. Seul le texte etait a corriger — il heritait de --ht-fg via la regle
+ * generale sur `body`, d'ou 1.08:1 sur les 25 lignes concernees. */
+tr[bgcolor="#FFDB4D"] {
+  color: var(--ht-on-accent) !important;
+}
+
+/* --- Info-bulle d'enchere rapide -------------------------------------------- */
+/* `.fastBidInfo`, rgb(235,235,235) avec texte rgb(122,122,122) a 3.60:1 sur 25
+ * lignes. Element natif du site, jamais traite faute d'avoir visite cette page. */
+.fastBidInfo {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg-dim) !important;
+}
+
+/* --- Barres de competence : exception au fond ROUGE ------------------------- */
+/* `.bar-denomination` a deja une regle generale en #10222b (voir 03-components.css),
+ * qui fonctionne sur quatre des cinq niveaux de severite de `.bar-level` — le defaut,
+ * `veryhigh` (vert), `high` (jaune) et `low` (orange) donnent tous entre 4.6 et 9.8:1.
+ *
+ * Seul `verylow` echoue : sur son rouge rgb(221,65,64), #10222b ne tient que 3.81:1.
+ * C'est le rappel exact du point 6 — verifier sur quel fond vit un texte avant de lui
+ * appliquer une couleur — trouve ici en enumerant systematiquement les CINQ niveaux
+ * plutot qu'en corrigeant celui-la seul. Un noir plus profond suffit : #0a0a0a monte
+ * a 4.62:1 sur ce rouge specifique, sans etre le noir absolu qui detonnerait ailleurs. */
+.bar-level.verylow .bar-denomination {
+  color: var(--ht-on-red) !important;
+}
+
+/* ===========================================================================
+ * RESTE A FAIRE :
+ *   (rien de connu pour l'instant)
+ * =========================================================================== */

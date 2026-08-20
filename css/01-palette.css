@@ -1,0 +1,122 @@
+/* HT Dark — palette.
+ *
+ * Seule source de verite des couleurs du theme. Aucune couleur en dur ailleurs :
+ * si une valeur doit changer, elle change ici et nulle part d'autre.
+ *
+ * Cible de contraste : 4.5:1 minimum pour le texte courant (WCAG AA),
+ * 3:1 pour les gros titres et les bordures.
+ */
+
+:root {
+  /* Fonds, du plus profond au plus clair.
+   * Les surfaces ont ete remontees d'un cran apres le premier essai : un fond trop
+   * profond rend le contraste dur et fatigue autant qu'un fond clair. */
+  --ht-bg: #14181c; /* fond de page */
+  --ht-surface: #1f252b; /* boites, panneaux */
+  --ht-surface-2: #272f36; /* en-tetes de boite, lignes paires des tableaux */
+  --ht-surface-3: #313b43; /* survol, element actif */
+
+  /* Traits */
+  --ht-line: #333c44; /* bordures, separateurs */
+  --ht-line-strong: #46525c; /* bordures a mettre en avant */
+
+  /* Textes */
+  --ht-fg: #dfe6ec; /* texte principal */
+  --ht-fg-dim: #9aa7b1; /* texte secondaire, legendes */
+  --ht-fg-faint: #6e7a84; /* texte desactive */
+
+  /* Couleurs d'intention */
+  --ht-link: #6fd08c; /* le vert Hattrick, remonte en luminance — 8.55:1 sur --ht-surface */
+  --ht-link-hover: #8fe0a8;
+  --ht-accent: #3fb950;
+
+  /* Vert des titres de section. Hattrick utilise un olive rgb(102,136,51) qui ne
+   * donne que 3.97:1 sur fond sombre — sous le seuil AA. Celui-ci monte a ~6.4:1
+   * tout en restant dans la famille de vert du site. */
+  --ht-green-head: #8ac36f;
+
+  /* Anneau interieur servant d'encadrement discret. En box-shadow inset : aucun
+   * impact sur la mise en page, contrairement a un border qui decalerait tout. */
+  --ht-ring: inset 0 0 0 1px #3a444d;
+  --ht-warn: #d9a441;
+  /* Remonte de #e5534b le 16/08/2026. L'ancienne valeur ne passait le seuil AA sur
+   * AUCUNE surface du theme — 4.06 sur le fond de `.error`, 4.18 sur --ht-surface et
+   * 3.67 sur --ht-surface-2 — alors qu'elle sert aussi a `.red`, `.lost`, `.negative`
+   * et `.dec`, donc a tous les montants negatifs et tous les matchs perdus du site.
+   * Le defaut etait passe inapercu parce qu'un rouge sombre sur fond sombre reste
+   * lisible a l'oeil ; seule la mesure le montre. Valeur retenue apres essai de
+   * quatre teintes : la premiere qui tient 4.5 sur la pire des quatre surfaces
+   * (4.59 sur --ht-surface-2, 5.09 sur `.error`, 5.23 et 6.03 ailleurs). */
+  --ht-danger: #ee6f66;
+
+  /* Selection dans les listes des ordres de match : c'est le vert que Hattrick pose
+   * lui-meme sur `.highlighted-player`, rgb(51,107,49), repris tel quel. Assez sombre
+   * pour porter --ht-fg a 5.0:1, et deja la couleur de selection de `.htbox-highlight`
+   * — deux signaux identiques, une seule couleur. On le nomme ici parce que le survol
+   * doit le poser aussi : Hattrick ne repeint le survol que sous conditions
+   * (`#ngMatchorder:not(.force-expanded-player):not(.ht-is-touch)`), et une ligne qui
+   * retomberait sur le blanc du site serait pire que pas de survol du tout. */
+  --ht-select: #336b31;
+
+  /* --- Teintes semantiques ---------------------------------------------------
+   * Ne sont nommees ici que les valeurs employees a DEUX endroits ou plus. Une
+   * teinte qui ne sert qu'une fois reste ecrite dans sa regle, avec en commentaire
+   * la couleur du site qu'elle remplace — c'est l'exception prevue au point 10.
+   *
+   * Les nommer sert deux choses : eviter qu'une des deux copies derive, et tenir la
+   * regle « deux signaux identiques meritent la meme couleur ». */
+
+  /* Texte sombre pose sur un aplat sature qu'on ne peut pas assombrir parce qu'il
+   * porte l'information : barres de valeur, pastilles de resultat, boutons pleins,
+   * numeros de position. Onze emplois dans le theme. */
+  --ht-on-accent: #10222b;
+
+  /* Le pendant clair du precedent : texte CLAIR sur un aplat sature qu'on ne peut pas
+   * assombrir. Huit emplois — boutons pleins, score du tableau d'affichage, etape
+   * courante de l'assistant, libelles des barres d'entrainement. */
+  --ht-on-accent-light: #ffffff;
+
+  /* Contenu masque ou retire — message supprime et spoiler. Meme signal, donc meme
+   * couleur : rose sourd la ou le site pose rgb(255,204,204) et rgb(238,226,226). */
+  --ht-removed-bg: #3d2528;
+  --ht-removed-fg: #f0b4b4;
+
+  /* Element marque par l'utilisateur — fil suivi (rgb(254,251,200)) et mention
+   * d'equipe nationale sur la fiche joueur. Ambre sourd, accorde a --ht-warn. */
+  --ht-marked-bg: #3a3418;
+
+  /* Verts sourds. Le premier remplit une portion de barre ou une pastille de
+   * victoire (rgb(167,198,169) / rgb(152,190,152)), le second sert d'aplat calme
+   * derriere un texte clair (pastille de competence, option de forum public). */
+  --ht-green-fill: #4f7d52;
+  --ht-green-soft: #24422a;
+
+  /* Vert profond de Hattrick, rgb(38,127,48) : celui de ses boutons pleins. Sert aux
+   * barres d'entrainement completes et aux boutons du panneau SkillValue. */
+  --ht-green-deep: #267f30;
+
+  /* Vert sourd des panneaux de resultat — match gagne, carte de resultat SkillValue. */
+  --ht-green-panel: #22301f;
+
+  /* Noir plus profond que --ht-on-accent, reserve aux aplats ROUGES ou celui-ci ne
+   * tient pas le seuil : 3.81:1 sur rgb(221,65,64) contre 4.62 avec celui-ci. */
+  --ht-on-red: #0a0a0a;
+
+  /* Fonds des trois etats. Nommes parce que le site les redecline composant par
+   * composant : les boites `.ok` / `.alert` / `.error` de Standard_main_11.css et le
+   * validateur `.mo-validator-*` des ordres de match disent la meme chose avec des
+   * classes differentes. Deux signaux identiques, donc une seule couleur chacun —
+   * sans quoi une confirmation n'aurait pas la meme teinte selon la page. */
+  --ht-ok-bg: #1e3a22; /* remplace rgb(231,251,219) et rgb(140,191,138) */
+  --ht-warn-bg: #3a2f16; /* remplace rgb(252,246,223) et rgb(255,224,102) */
+  --ht-error-bg: #3a1f1f; /* remplace rgb(243,228,228) et rgb(223,143,143) */
+
+  /* Couleur d'accent de l'equipe courante.
+   *
+   * Repli : le vert Hattrick. Le mecanisme qui alimentera reellement cette variable
+   * (filtre CSS, selection sur style en ligne, ou quelques lignes de JS) sera arrete
+   * apres inspection des pages — c'est la decision centrale du projet.
+   */
+  --team-accent: var(--ht-accent);
+  --team-accent-dim: color-mix(in srgb, var(--team-accent) 35%, var(--ht-surface));
+}

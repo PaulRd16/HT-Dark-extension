@@ -1,0 +1,219 @@
+/* HT Dark — regles ciblant SkillValue (modules CHPP).
+ *
+ * SkillValue regroupe plusieurs modules CHPP : la carte de calcul de valeur
+ * (#skillCalcOverlay), l'encadre « Best lineup » des ordres de match, et le panneau de
+ * filtre du marche des transferts.
+ *
+ * Particularite documentee au point 4 du CLAUDE.md : ces modules injectent leur CSS
+ * par le manifeste de leur extension, donc INVISIBLE dans document.styleSheets. On ne
+ * peut pas mesurer la specificite adverse — d'ou l'identifiant doublé sur
+ * #skillCalcOverlay, seul endroit du theme ou l'on surencherit sans avoir lu la regle
+ * qu'on combat.
+ *
+ * Ce fichier est INERTE si les modules ne sont pas installes.
+ */
+
+/* ===========================================================================
+ * ORDRES DE MATCH — releve du 15/08/2026 sur MatchOrder/Matchorder.aspx
+ *
+ * La page la plus moderne du site : composants Angular (ht-matchorder, ht-flip,
+ * ht-facecard...) et glisser-deposer. Deux particularites :
+ *
+ *  - Angular encapsule ses styles par des attributs generes du type
+ *    `[_nghost-ng-c573703697]`. Ces hachages CHANGENT a chaque build de Hattrick :
+ *    ne jamais s'en servir comme selecteur. On passe par les classes, avec
+ *    !important, ce qui suffit puisque Angular n'en pose pas.
+ *
+ *  - Certaines regles sont invisibles a l'inspection : les extensions qui injectent
+ *    leur CSS par leur manifeste n'apparaissent pas dans document.styleSheets. Les
+ *    boutons `svbf` etaient en blanc sur blanc (ratio 1.00) sans qu'aucune regle
+ *    ne soit lisible. On ne peut pas les diagnostiquer, seulement passer devant.
+ * =========================================================================== */
+
+/* Les onglets `.ht-tabs` de l'assistant sont traites avec les trois autres systemes
+ * d'onglets du site, dans 03-components.css. */
+
+/* --- Grille de formation (extension) --------------------------------------- */
+/* Texte blanc sur fond blanc : le pire ratio possible, 1.00. */
+button.svbf-btn {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+  border-color: var(--ht-line) !important;
+}
+
+.svbf-head,
+.svbf-best {
+  color: var(--ht-fg) !important;
+}
+
+/* --- Encadre « Best lineup » (extension) ------------------------------------ */
+/* rgb(247,247,247) sur le panneau lateral.
+ *
+ * `#sv-best-formation-panel` est l'enveloppe, distincte de `#sv-best-formation` : elle
+ * restait claire, et c'est elle qui portait `.svbf-best` a 1.18:1. Aucune regle ne la
+ * concerne dans document.styleSheets — le CSS de cet outil est injecte par le
+ * manifeste de l'extension, donc invisible a la sonde. Deuxieme endroit du theme,
+ * apres #skillCalcOverlay, ou l'on ne peut pas lire l'adversaire. */
+#sv-best-formation,
+#sv-best-formation-panel,
+.svbf-section {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Titres de section (« Defensive », « Normal », « Offensive ») en rgb(47,102,50) :
+ * un vert fonce concu pour un fond clair, 1.98:1 ici. Le vert de titre de la palette
+ * garde la famille de couleur en remontant a 6.4. */
+.svbf-sec-title {
+  color: var(--ht-green-head) !important;
+}
+
+/* --- Module CHPP « Hattrick SkillValue » ------------------------------------ */
+/* Carte modale d'un outil tiers (SkillValue 3.2, par hypnodrum), ouverte depuis
+ * l'onglet du meme nom sur la fiche joueur. Code tiers, donc partie fragile : ses
+ * classes peuvent changer a une mise a jour de l'outil, contrairement a celles de
+ * Hattrick.
+ *
+ * Tout est scope sous #skillCalcOverlay : `.label`, `.result`, `.info-card` sont des
+ * noms trop generiques pour etre cibles a nu sans risque de collision. */
+/* IDENTIFIANT DOUBLE, volontairement. Une premiere version en `#skillCalcOverlay`
+ * simple (1,0,0) n'a rien change : les fonds restaient a rgb(247,247,247).
+ *
+ * La sonde n'y peut rien — elle ne trouve AUCUNE regle posant ce fond, alors qu'il
+ * est bien calcule. Le CSS de cet outil est injecte par le manifeste d'une extension,
+ * donc absent de document.styleSheets (cf. regle 4 du CLAUDE.md). Impossible de
+ * mesurer la specificite adverse, donc impossible de la depasser au plus juste.
+ *
+ * `#x#x` porte a (2,0,0) : seul un style en ligne peut encore gagner, et celui de
+ * cette carte ne touche qu'a la position. C'est le seul endroit du theme ou je monte
+ * la specificite sans avoir lu la regle adverse — parce que je ne peux pas la lire. */
+#skillCalcOverlay#skillCalcOverlay {
+  background-color: var(--ht-surface) !important;
+  color: var(--ht-fg) !important;
+}
+
+#skillCalcOverlay#skillCalcOverlay .image-card,
+#skillCalcOverlay#skillCalcOverlay .author-card {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* Le panneau de resultat est en vert pale : c'est lui qui porte l'information utile,
+ * on garde la teinte en l'assombrissant plutot que de le neutraliser. */
+#skillCalcOverlay#skillCalcOverlay .info-card {
+  background-color: var(--ht-green-panel) !important;
+  color: var(--ht-fg) !important;
+}
+
+#skillCalcOverlay#skillCalcOverlay .label,
+#skillCalcOverlay#skillCalcOverlay .sublevel-extra {
+  color: var(--ht-fg-dim) !important;
+}
+
+#skillCalcOverlay#skillCalcOverlay .result {
+  color: var(--ht-fg) !important;
+}
+
+/* --- Module CHPP « SkillValue » : panneau de filtre -------------------------- */
+/* Cinq groupes en verts pales, tous en style inline SANS !important — donc chacun
+ * surmontable par une regle normale. Hierarchie de surfaces : le panneau lui-meme
+ * au niveau boite (--ht-surface), les groupes qu'il contient un cran au-dessus
+ * (--ht-surface-2) pour rester visuellement distincts de leur conteneur — memes
+ * raisons que le titre de dossier du forum, deja documente au point 1. */
+#sv-transfer-filter-panel {
+  background-color: var(--ht-surface) !important;
+  border-color: var(--ht-line) !important;
+}
+
+#sv-transfer-filter-panel .sv-group,
+#sv-transfer-filter-panel .sv-actions {
+  background-color: var(--ht-surface-2) !important;
+  border-color: var(--ht-line) !important;
+}
+
+/* Titres de groupe (« Main Skill », « Ability »...) : vert fonce rgb(38,122,63) concu
+ * pour un fond clair, 2.9:1 une fois le panneau assombri. Meme readaptation que les
+ * autres titres verts du theme.
+ *
+ * Le titre du groupe « Actions » n'a PAS la classe `.sv-title` — meme style inline au
+ * caractere pres (`color:#267a3f`), mais porte sans nom, incoherence du balisage de
+ * l'extension elle-meme. Cible par sa position, premier enfant du groupe, plutot que
+ * de supposer une classe qui n'existe pas ici. */
+#sv-transfer-filter-panel .sv-title,
+#sv-transfer-filter-panel .sv-actions > div:first-child {
+  color: var(--ht-green-head) !important;
+}
+
+/* Texte de statut, gris rgb(85,85,85) a 2.07:1. */
+#sv-transfer-filter-panel .sv-status-text,
+#sv-transfer-filter-panel .sv-right > span {
+  color: var(--ht-fg-dim) !important;
+}
+
+/* Piste de la barre de progression du panneau — surface neutre, pas de donnee.
+ * Le remplissage (`.sv-progress-bar`, vert rgb(66,147,61)) n'est pas touche : c'est
+ * lui qui porte l'avancement, et sans texte dessus le contraste ne s'applique pas. */
+#sv-transfer-filter-panel .sv-progress {
+  background-color: var(--ht-surface-3) !important;
+}
+
+/* Message de resultat a droite du panneau (« Filtered: N players », ou similaire) :
+ * meme famille verte que les titres, mais avec son PROPRE fond clair pose en ligne.
+ * Sans classe nommee — scope par la structure du widget plutot qu'a nu. */
+#sv-transfer-filter-panel .sv-right > div {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-green-head) !important;
+}
+
+/* --- Module CHPP « SkillValue » : pastille de prix estime -------------------- */
+/* `.sv-price-badge`, posee sur CHAQUE ligne de joueur (13 occurrences ici), separee
+ * du panneau de filtre traite plus haut — meme extension, deux zones d'injection
+ * differentes dans la page, a corriger chacune. Fond pale rgb(234,246,238) en style
+ * inline sans !important, meme mecanisme que le panneau.
+ *
+ * Les libelles « Avg » et « Ask » n'ont AUCUNE couleur inline : ils heritaient deja
+ * de --ht-fg via la regle generale sur `body`, donc 1.13:1 uniquement parce que le
+ * fond etait reste clair. Assombrir le fond suffit a les corriger, sans regle de texte
+ * dediee.
+ *
+ * L'ecart chiffre (« +103 857 » / « -52 200 ») porte lui une couleur SEMANTIQUE fixe
+ * — rgb(47,125,50) au-dessus de l'estimation, rgb(170,51,51) en dessous — l'exact
+ * pendant de `.inc` / `.dec` deja dans le theme. Ces deux teintes, concues pour le
+ * fond clair d'origine, tombent a 2.65 et 2.09 sur nos surfaces sombres : on reprend
+ * donc les MEMES jetons que `.inc` et `.dec`, pour que le meme signal financier porte
+ * la meme couleur partout sur le site plutot que d'inventer une troisieme paire.
+ *
+ * Selecteur structurel : la div de l'ecart n'a pas de classe, seulement une couleur en
+ * ligne qui differe selon le signe — impossible a cibler par sa valeur. Elle est
+ * systematiquement le troisieme et dernier enfant de la ligne flex, verifie sur les
+ * 13 occurrences. */
+.sv-price-badge {
+  background-color: var(--ht-surface-2) !important;
+  border-color: var(--ht-line) !important;
+}
+
+/* --- Module CHPP « SkillValue » : boutons ------------------------------------ */
+/* `#filterBtn`, `#resetBtn` et le bouton d'ouverture pose sur chaque ligne de joueur
+ * (`.skillValueLauncher`, 25 occurrences) partagent le meme vert rgb(66,147,61) que
+ * la barre de progression. Sur cette teinte, le texte blanc qu'ils portent deja ne
+ * tient que 3.84:1 — le bouton lui-meme est trop clair, ce n'est pas un cas de texte
+ * mal choisi. Repris au vert profond de Hattrick, deja valide ailleurs dans le theme
+ * (barres d'entrainement completes) a 5.05:1 avec du blanc. Le texte n'est pas
+ * retouche : il est deja blanc, seul le fond change. */
+/* `#filterBtn` et `#resetBtn` sont scopes par le panneau : ce sont des identifiants
+ * GENERIQUES, et un fond vert pose sur n'importe quel `#filterBtn` du site serait un
+ * effet de bord invisible. `.skillValueLauncher`, lui, vit sur chaque ligne de joueur,
+ * hors du panneau — il reste a nu. */
+#sv-transfer-filter-panel #filterBtn,
+#sv-transfer-filter-panel #resetBtn,
+.skillValueLauncher {
+  background-color: var(--ht-green-deep) !important;
+}
+
+.sv-price-badge > div > div:last-child {
+  color: var(--ht-link) !important; /* ecart positif, remplace rgb(47,125,50) */
+}
+
+.sv-price-badge > div > div:last-child[style*="a33"] {
+  color: var(--ht-danger) !important; /* ecart negatif, remplace rgb(170,51,51) */
+}
