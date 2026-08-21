@@ -1267,15 +1267,33 @@ button.c-day.c-day.c-selected-day {
  * cesser d'etre lumineux sur fond sombre. */
 .recent-result-won {
   background-color: var(--ht-green-fill) !important; /* remplace rgb(152,190,152) */
+  border-color: var(--ht-green-fill) !important;
 }
 
 .recent-result-lost {
   background-color: #7d4f4f !important;
+  border-color: #7d4f4f !important;
 }
 
 .recent-result-tied,
 .recent-result-draw {
   background-color: var(--ht-surface-3) !important;
+  border-color: var(--ht-surface-3) !important;
+}
+
+/* Cadres neutres de la famille `.casual-*` (Arena) : rgb(221,221,221) sur les cartes
+ * de contest, de statistiques et le compteur de compte. Balayage de bordures,
+ * trouve par le meme motif que le reseau de recrutement — pas d'information portee,
+ * couleur seule. */
+.casual-card,
+.myAccountCounter {
+  border-color: var(--ht-line) !important;
+}
+
+/* Bandeau « Supporter Diamond », rgb(228,213,242) — fond deja sombre, seul le cadre
+ * lavande restait clair. */
+.accountBoxDiamond {
+  border-color: var(--ht-line) !important;
 }
 
 /* ===========================================================================
