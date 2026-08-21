@@ -69,6 +69,27 @@ span[id^="ft_"] {
   color: var(--ht-fg) !important;
 }
 
+/* Cadre du widget monitor sur le tableau de bord (`#ft-monitor-container .ft-monitor-frame`)
+ * et le filet sous son titre : rgb(236,236,236) partout, trouve par le balayage de
+ * bordures. */
+.ft-monitor-frame {
+  border-color: var(--ht-line) !important;
+}
+
+.ft-monitor-frame > h3 {
+  border-bottom-color: var(--ht-line) !important;
+}
+
+/* Bouton natif « Import », `appearance: auto`, dans `#ft-monitor-live-links` : meme
+ * defaut que le bouton « Rejouez ce match ! » de la visionneuse — `color-scheme: dark`
+ * lui donne une face grise lisible, mais le navigateur dessine son bord `outset` en
+ * blanc pur. Couleurs seules. */
+#ft-monitor-live-links button {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+  border-color: var(--ht-line) !important;
+}
+
 /* En-tetes de section de la boite de liens (« Main Links », « Tournaments »,
  * « Youth Links », « Other ») : rgb(208,208,208), entre 1.22 et 1.59:1. Presents sur
  * toutes les pages. Les trois derniers portent un id, le premier n'a que .ft-dummy —

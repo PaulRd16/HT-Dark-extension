@@ -1130,6 +1130,25 @@ button.c-day {
   color: var(--ht-fg) !important;
 }
 
+/* Grille de cases rgb(227,227,227), trouvee par le balayage de bordures : le fond
+ * etait deja sombre, seul le quadrillage restait clair. */
+.c-day,
+.c-days,
+.c-week-info,
+.c-week-navigation button {
+  border-color: var(--ht-line) !important;
+}
+
+/* Encart « Aucun message », rgb(240,240,240) sur les quatre cotes, coins arrondis. */
+.no-messages {
+  border-color: var(--ht-line) !important;
+}
+
+/* Separateur des taches a faire (`ul.task-group li > a`), rgb(247,247,247). */
+ul.task-group li > a {
+  border-bottom-color: var(--ht-line) !important;
+}
+
 /* `.c-day.c-selected-day[NGHASH]` pese (0,3,0) avec !important ; la classe doublee
  * porte a (0,3,1). */
 button.c-day.c-day.c-selected-day {

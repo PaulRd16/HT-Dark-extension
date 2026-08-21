@@ -528,6 +528,13 @@ a.flag img {
   border-top-color: var(--ht-line) !important;
 }
 
+/* Rangees des widgets « Derniers messages du forum » et « Derniers transferts » du
+ * tableau de bord, rgb(240,240,240). Classes specifiques, sans !important. */
+.thread-row-inner,
+.transfer-row-wrapper {
+  border-bottom-color: var(--ht-line) !important;
+}
+
 /* --- Barres de caracteristiques (.ht-bar) ---------------------------------- */
 /* Present partout ou une valeur est representee : joueurs, notes de match, jeunes.
  *
@@ -701,6 +708,11 @@ legend h3,
 .match-date,
 ul.task-group .deadline {
   color: var(--ht-fg-dim) !important;
+}
+
+/* Separateur de `.info-row`, rgb(243,243,243), trouve par le balayage de bordures. */
+.info-row {
+  border-bottom-color: var(--ht-line) !important;
 }
 
 /* Gris rgb(102,102,102) des dates et petits textes : 2.82:1.
@@ -880,7 +892,10 @@ ul.tabbedList li a,
 .ht-tabs > *,
 .ht-tabs li,
 .nav-tabs-wrapper,
-.nav-tab {
+.nav-tab,
+.dashboard-navigation,
+.dashboard-navigation li,
+.dashboard-navigation li a {
   border-color: var(--ht-line) !important;
 }
 
