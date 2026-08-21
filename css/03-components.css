@@ -516,6 +516,18 @@ a.flag img {
   border-color: var(--ht-line) !important;
 }
 
+/* Separateur entre les equipes gerees, page d'accueil manager (`.IRLTeamListItem`).
+ * Meme rgb(204,204,204) que l'olive des h2, feuille differente. */
+.IRLTeamListItem {
+  border-bottom-color: var(--ht-line) !important;
+}
+
+/* Separateurs de la liste des formations, ordres de match (`.mo-lineups li`).
+ * Encore rgb(204,204,204), encore sans !important cote site. */
+.mo-lineups li {
+  border-top-color: var(--ht-line) !important;
+}
+
 /* --- Barres de caracteristiques (.ht-bar) ---------------------------------- */
 /* Present partout ou une valeur est representee : joueurs, notes de match, jeunes.
  *
