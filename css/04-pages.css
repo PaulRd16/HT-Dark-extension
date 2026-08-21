@@ -230,6 +230,14 @@ div.folderHeaderPublic {
   color: var(--ht-warn) !important;
 }
 
+/* Filet au-dessus de la signature, rgb(204,204,204) : contrairement a `.cfHeader` et
+ * `.cfFooter`, celui-ci est une vraie bordure du site (verifie : `border-top-width`,
+ * `-style` et `-color` distincts dans la regle). `border-top-color` seul suffit donc,
+ * pas de raccourci a corriger. */
+.cfMessage .signature {
+  border-top-color: var(--ht-line) !important;
+}
+
 /* Message supprime. Le rose rgb(255,204,204) du site portait notre texte clair a
  * 1.13:1. On reste dans les tons roses — c'est le code couleur de la suppression —
  * en descendant le fond et en remontant le texte : 7.9:1.

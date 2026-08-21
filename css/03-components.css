@@ -895,7 +895,8 @@ ul.tabbedList li a,
 .nav-tab,
 .dashboard-navigation,
 .dashboard-navigation li,
-.dashboard-navigation li a {
+.dashboard-navigation li a,
+.forumTabs {
   border-color: var(--ht-line) !important;
 }
 

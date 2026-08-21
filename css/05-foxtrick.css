@@ -274,3 +274,18 @@ a.ft-staff-chpp.ft-staff-chpp {
   background-color: #204a2e !important; /* remplace vert pur */
   color: var(--ht-on-accent-light) !important;
 }
+
+/* --- Pagination du forum (`.ft-dummy.pager`) -------------------------------- */
+/* rgb(221,221,221) sur les liens de page, sans !important. */
+.pager a.page {
+  border-color: var(--ht-line) !important;
+}
+
+/* Bouton natif « OK » du postbox (aller a un message), `appearance: auto` : meme
+ * defaut que les deux autres boutons non styles deja rencontres (visionneuse de
+ * match, widget monitor). Couleurs seules. */
+.ft_gotobox_btn {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+  border-color: var(--ht-line) !important;
+}
