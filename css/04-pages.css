@@ -1635,6 +1635,111 @@ tr[bgcolor="#FFDB4D"] {
 }
 
 /* ===========================================================================
+ * STATISTIQUES — releve du 21/08/2026 sur /World/Stats/Hub.aspx
+ *
+ * Page jamais visitee jusqu'ici. Composants propres a ce hub, non reutilises
+ * ailleurs : `.stats-nav-*`, `.stats-options`, `.card-*`.
+ *
+ * TOUT est scope par `#ngStats`, un id stable du conteneur (verifie sur la chaine
+ * d'ancetres, comme `#ngChat`/`#ngHelp` ailleurs dans le theme) : il pese plus que
+ * n'importe quel nombre de classes ou d'attributs `[_ngcontent]`.
+ *
+ * CAS NON RESOLU, signale plutot que tu : `#ngStats .card-content-button a`
+ * (bouton « Full Table ») a un comportement instable en test. La partie `color`
+ * de la regle s'applique de facon fiable et verifiee (texte a --ht-fg). La partie
+ * `background-color`, elle, a echoue de facon irreproductible : identique par
+ * `.matches()`, priorite `!important` confirmee superieure a la regle adverse
+ * (non-important, (0,3,1)) — et pourtant le fond mesure restait a rgb(240,240,240)
+ * dans plusieurs essais, y compris en inserant la regle directement dans la
+ * feuille du site via `insertRule`. Aucune des causes habituelles de ce theme
+ * (Shadow DOM, iframe, style en ligne, `@layer`, `var()` non resolu) n'explique
+ * l'ecart — a verifier a l'ecran apres rechargement de l'extension avant de
+ * considerer ce bouton traite. */
+
+/* Deux niveaux de navigation (equipe/monde/communaute, puis onglets de section).
+ * Meme motif que les autres familles d'onglets : fond clair et texte vert de lien
+ * au repos, 1.66 a 1.9:1. `.stats-nav-level1 li a.active` reste au MEME fond que
+ * ses voisins inactifs — a la difference de `.stats-options`, ce niveau ne porte
+ * pas d'etat visuel propre, uniquement la position. */
+#ngStats .stats-nav-level1,
+#ngStats .stats-nav-level1 li a,
+#ngStats .stats-nav-level2 li a,
+#ngStats .card-content-button a {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+#ngStats .stats-nav-level1 li a.active {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* `.stats-options` a l'inverse porte deja son propre etat actif, gris fonce sur
+ * texte blanc — laisse tel quel, deja lisible (13:1). Seuls les items inactifs,
+ * fond quasi blanc avec le meme vert de lien, sont corriges. */
+#ngStats .stats-options li a:not(.active) {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+/* En-tete de carte (`.card-header`), vert rgb(95,138,87) — c'est l'information
+ * (bordure d'equipe/categorie), on garde la teinte. Le blanc d'origine n'y donnait
+ * que 3.99:1. `--ht-on-accent` non plus (4.09) : ce vert est assez sombre pour que
+ * le texte sombre habituel n'ouvre presque plus d'ecart. `--ht-on-red`, plus proche
+ * du noir, passe a 4.96 — jeton deja existant, pas une nouvelle teinte. */
+#ngStats .card-header {
+  color: var(--ht-on-red) !important;
+}
+
+/* Carte principale (`.card-main`), vert clair rgb(110,155,102) portant les
+ * statistiques phares de l'equipe : meme raisonnement, texte sombre a la place du
+ * blanc d'origine, qui n'y donnait que 3.21:1. */
+#ngStats .card-main-teamname-wrapper,
+#ngStats .card-main-stat-wrapper,
+#ngStats .card-main-default-wrapper,
+#ngStats .card-main-default-large {
+  color: var(--ht-on-accent) !important;
+}
+
+/* `.card-main-default-wrapper` est parfois enveloppe dans un `<a>` : notre regle sur
+ * `a` (02-base.css) pose alors sa propre couleur sur ce lien, plus proche dans la
+ * chaine d'heritage que le `div` ci-dessus. Le vert de lien s'y retrouvait a 1.69:1. */
+#ngStats .card-main-default-wrapper a {
+  color: var(--ht-on-accent) !important;
+}
+
+/* Titre de page (« Team stats » etc.), rgb(46,46,46) — gris fonce concu pour un
+ * fond clair, 1.14:1 sur notre surface sombre. */
+#ngStats .stats-data-heading-title,
+#ngStats .stats-data-heading-subtitle {
+  color: var(--ht-fg) !important;
+}
+
+/* Bordures relevees par le balayage de bordures : cadres de carte, filets sous les
+ * deux niveaux de navigation et sous le bandeau de filtres. Aucune n'est porteuse
+ * d'information, couleur seule. */
+#ngStats .card-content-row {
+  border-bottom-color: var(--ht-line) !important;
+}
+
+#ngStats .card-content {
+  border-color: var(--ht-line) !important;
+}
+
+#ngStats .stats-nav-level1,
+#ngStats .stats-nav-level2 {
+  border-bottom-color: var(--ht-line) !important;
+}
+
+#ngStats .stats-nav-level1 li a {
+  border-inline-end-color: var(--ht-line) !important;
+}
+
+#ngStats .stats-options-wrapper {
+  border-bottom-color: var(--ht-line) !important;
+}
+
+/* ===========================================================================
  * RESTE A FAIRE :
  *   (rien de connu pour l'instant)
  * =========================================================================== */
