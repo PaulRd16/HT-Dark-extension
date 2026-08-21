@@ -18,3 +18,22 @@ desktop.ini
 *.pem
 .env
 web-ext-artifacts/
+
+# Publication AMO — contiennent les cles d'API de web-ext sign
+.web-ext-config.js
+.web-ext-config.mjs
+.web-ext-config.cjs
+.amo-upload-uuid
+*.p12
+*.key
+*.crx
+.env.*
+
+# Outillage — le script de build recommande `npx addons-linter`
+node_modules/
+package-lock.json
+
+# Liste locale de motifs interdits : contient les valeurs REELLES que le
+# garde-fou surveille. Le script tools/build-firefox.py ne les cite plus, pour
+# ne pas publier ce qu'il protege. Ce fichier ne doit jamais etre commite.
+tools/interdits.local.txt
