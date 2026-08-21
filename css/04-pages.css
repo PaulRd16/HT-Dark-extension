@@ -911,14 +911,18 @@ mat-slider.tr-slider.tr-slider {
  * raccourci `border-top`. Les rangs heritent donc du filet du theme sans rien
  * declarer, et seul le separateur surcharge la couleur.
  *
- * Hauteurs verifiees avant/apres : identiques ligne par ligne, table a 297 px. */
+ * Hauteurs verifiees avant/apres : identiques ligne par ligne, table a 297 px.
+ *
+ * Le separateur est monte de --ht-line-strong a --ht-fg-dim apres essai a l'ecran :
+ * l'ecart avec les filets de rang passe de 1.42 a 4.54, ce qui rend la frontiere
+ * caracteristiques / forme lisible d'un coup d'oeil sans avoir a la chercher. */
 .skills-table td {
   border-top-width: 1px;
   border-top-style: solid;
 }
 
 .skills-table tr.separator-top td {
-  border-top-color: var(--ht-line-strong) !important;
+  border-top-color: var(--ht-fg-dim) !important;
 }
 
 /* --- Textes secondaires ----------------------------------------------------- */
@@ -1349,10 +1353,11 @@ table.htbox-table tr.legend th {
  * page etait sombre, par la regle sur `body`. Le reste etait intact, a commencer par
  * `div.chat-content` et son million de pixels carres en rgb(220,226,220).
  *
- * Ce portail ne partage RIEN avec le module de chat embarque des pages normales :
- * verifie, `#ngChat` et les classes `chat-*` ne coexistent jamais. Ce n'est donc pas
- * une famille site-wide, mais elle vaut pour TOUS les salons, puisque tout est en
- * classes et qu'aucun sélecteur ne depend du canal.
+ * ATTENTION, une affirmation fausse a longtemps figure ici : « `#ngChat` et les classes
+ * `chat-*` ne coexistent jamais ». C'est l'inverse — le module embarque des pages de
+ * division et de forum utilise EXACTEMENT les memes classes de bulle, sous `#ngChat`.
+ * Les regles de bulle ont donc ete sorties d'ici et dé-scopees dans 03-components.css.
+ * Ne restent ci-dessous que ce qui est propre a la mise en page du portail.
  *
  * SCOPE PAR `#ngChatPortal`. `.card` et `.item` sont bien trop generiques pour etre
  * cibles a nu — c'est la regle du CLAUDE.md sur les noms generiques. Cet identifiant
@@ -1389,32 +1394,9 @@ table.htbox-table tr.legend th {
   color: var(--ht-fg) !important;
 }
 
-/* --- Bulles de message ------------------------------------------------------ */
-/* Encore une famille a trois etats, et les deux dernieres couleurs sont porteuses :
- *   .chat-bubble                       rgb(238,238,238)  message recu — surface
- *   .chat-message-own .chat-bubble     rgb(170,204,168)  mes messages — vert
- *   .chat-error .chat-bubble           rgb(204,170,170)  echec d'envoi — rose
- *
- * Le vert et le rose sont l'information : on garde la teinte en l'assombrissant, et
- * le rose reprend le fond d'erreur de la palette, celui de `.error` et du validateur
- * des ordres de match. La bulle neutre, elle, n'est qu'une surface. */
-#ngChatPortal .chat-bubble {
-  background-color: var(--ht-surface-2) !important;
-  color: var(--ht-fg) !important;
-}
-
-#ngChatPortal .chat-message-own .chat-bubble {
-  background-color: var(--ht-green-soft) !important;
-}
-
-#ngChatPortal .chat-error .chat-bubble {
-  background-color: var(--ht-error-bg) !important;
-}
-
-/* Nom de l'auteur : rgb(38,127,48), le vert de lien concu pour un fond clair. */
-#ngChatPortal .chat-message-user {
-  color: var(--ht-link) !important;
-}
+/* Les bulles de message (`.chat-bubble`, `.chat-message-own`, `.chat-error`,
+ * `.chat-message-user`) sont dans 03-components.css : elles servent aussi au chat
+ * embarque sous `#ngChat`, hors de ce portail. */
 
 /* ===========================================================================
  * MARCHE DES TRANSFERTS — releve du 18/08/2026 sur /World/Transfers/

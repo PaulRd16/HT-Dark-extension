@@ -884,6 +884,85 @@ hattrick-reactions::part(dropdown) {
   color: var(--ht-fg) !important;
 }
 
+/* Bulles de message. Elles vivent dans DEUX contextes, ce qui a ete decouvert apres
+ * coup : le portail autonome `#ngChatPortal` (/ChatPortal.aspx) et le module embarque
+ * `#ngChat`, present sur les pages de division et de forum. La section du portail dans
+ * 04-pages.css affirmait le contraire, et ses regles etaient scopees par l'identifiant
+ * du portail : dans le chat de division, les bulles sont restees claires — 1.09:1 sur
+ * un message recu, 1.40 sur les siens. Le defaut a survecu a une passe de verification
+ * entiere parce qu'aucune sonde n'a ete lancee sur ce chat-la.
+ *
+ * Ces classes sont propres au composant, jamais generiques : aucun scope necessaire, et
+ * c'est le scope qui etait le bug. Restent dans 04 les seules classes reellement
+ * ambigues du portail — `.card`, `.item`, `.chat-content`, `.chat-input`.
+ *
+ * Famille a trois etats, dont deux porteurs d'information :
+ *   .chat-bubble                     rgb(238,238,238)  message recu — simple surface
+ *   .chat-message-own .chat-bubble   rgb(170,204,168)  les siens — vert
+ *   .chat-error .chat-bubble         rgb(204,170,170)  echec d'envoi — rose
+ * Le vert et le rose sont l'information : teinte conservee, assombrie. Le rose reprend
+ * le fond d'erreur de la palette, celui de `.error` et du validateur des ordres. */
+.chat-bubble {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+.chat-message-own .chat-bubble {
+  background-color: var(--ht-green-soft) !important;
+}
+
+.chat-error .chat-bubble {
+  background-color: var(--ht-error-bg) !important;
+}
+
+/* Nom de l'auteur : rgb(38,127,48), le vert de lien concu pour un fond clair.
+ *
+ * Le site mute en rgb(153,153,153) le nom de l'auteur sur SES propres messages, mais
+ * uniquement sous `.oldDesign` — absent du chat embarque, ou les deux noms se valent
+ * deja. On ne reproduit pas cette nuance : l'appartenance est deja portee par la
+ * couleur de la bulle et par son cote, le nom n'en est qu'un rappel decoratif, et le
+ * thema met tous les liens a la meme couleur. */
+.chat-message-user {
+  color: var(--ht-link) !important;
+}
+
+/* Pastille de messages non lus : rgb(121,167,119), le vert pale habituel de Hattrick.
+ * C'est un signal, la teinte reste ; seul le texte pose dessus passe au sombre. */
+.chat-unread-messages {
+  color: var(--ht-on-accent) !important;
+}
+
+/* Bulles du chat de match (`events_right`), la SECONDE famille de bulles du composant.
+ * Elle a sa propre pointe, dessinee en `border-right-color` sur un `::after`, qui doit
+ * suivre le fond sous peine de laisser un triangle clair contre une bulle sombre.
+ *
+ * Sa logique est INVERSEE par rapport a `.chat-bubble` : ici c'est le message recu qui
+ * est vert — rgb(204,255,204) — et le sien qui est gris rgb(238,238,238). On mappe donc
+ * par la COULEUR du site et non par le role, ce qui preserve la distinction telle
+ * qu'elle est codee sans avoir a l'interpreter.
+ *
+ * NON VERIFIE A L'ECRAN : ces bulles n'apparaissent que dans le chat d'un match en
+ * direct, absent des pages ouvertes. Les selecteurs et les couleurs sont releves
+ * directement dans la feuille du site, pas deduits — mais un coup d'oeil pendant un
+ * match reste a faire. */
+.chat-message .events_right {
+  background-color: var(--ht-green-soft) !important;
+  color: var(--ht-fg) !important;
+}
+
+.chat-message .events_right::after {
+  border-right-color: var(--ht-green-soft) !important;
+}
+
+.chat-message.chat-message-own .events_right {
+  background-color: var(--ht-surface-2) !important;
+  color: var(--ht-fg) !important;
+}
+
+.chat-message.chat-message-own .events_right::after {
+  border-right-color: var(--ht-surface-2) !important;
+}
+
 /* --- Panneau d'aide rapide (#ngHelp) --------------------------------------- */
 /* Present sur toutes les pages, replie derriere l'onglet « QUICK HELP ». Son
  * contenu fait 380x741 en blanc pur : de loin le plus gros bloc clair restant du
