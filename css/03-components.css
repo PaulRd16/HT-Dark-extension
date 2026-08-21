@@ -313,6 +313,14 @@ table.search {
   color: var(--ht-fg) !important;
 }
 
+/* Pastille de reduction (« -X% », boutique/supporter), rgb(238,57,57) : le blanc
+ * n'y donnait que 3.98:1. Rouge assombri d'un cran, teinte conservee — c'est un
+ * signal promotionnel, pas une surface. Occurrence unique : couleur ecrite dans
+ * la regle plutot que promue en variable (point 10 du CLAUDE.md). */
+.upgradeDiscount {
+  background-color: #c93030 !important; /* remplace rgb(238,57,57) */
+}
+
 /* Pastilles de competence : on garde le vert comme code couleur, assombri. */
 a.skill,
 .skill {
