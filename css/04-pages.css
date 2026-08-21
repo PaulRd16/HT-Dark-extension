@@ -323,6 +323,23 @@ div.important-match-draw .important-match-content {
  * tous en mode « scoped » et donc atteignables par du CSS ordinaire.
  * =========================================================================== */
 
+/* --- Bouton « Rejouez ce match ! » ------------------------------------------ */
+/* Le SEUL bouton natif entierement non style de la page : `appearance: auto`, aucune
+ * regle du site ne le vise. `color-scheme: dark` lui donne bien une face grise et du
+ * texte blanc (5.33:1, lisible), mais le navigateur dessine son bord `outset` en blanc
+ * pur — un cadre de 2 px qui crie sur une page sombre.
+ *
+ * On ne touche ni a la largeur ni au style `outset`, seulement aux couleurs. Verifie
+ * avant d'ecrire qu'il ne s'agissait pas d'un bouton d'extension : la sonde disait
+ * « dans une extension » a tort, parce qu'elle remontait jusqu'a `body.ft-teamID-…`,
+ * une classe que FoxTrick pose sur le body et qui contient donc toute la page. La
+ * boite s'intitule « Rejouez ce match ! » et vient bien de Hattrick. */
+.replay-button-wrapper button {
+  background-color: var(--ht-surface-3) !important;
+  color: var(--ht-fg) !important;
+  border-color: var(--ht-line) !important;
+}
+
 /* --- Commentaire en direct -------------------------------------------------- */
 /* Le pire cas de tout le site : bulles en rgb(238,238,238) portant du texte clair,
  * soit 1.09:1 sur 54 elements. Le commentaire etait purement et simplement efface. */

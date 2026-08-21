@@ -10,9 +10,15 @@
  * pas, on corrige le texte pose dessus, qui etait clair sur clair. Pendant exact du
  * traitement applique a `.possession-home span` de Hattrick, dans 04-pages.css. */
 .dhth-mi-possession-home,
-.dhth-mi-possession-away,
 .dhth-mi-possession-draw {
   color: var(--ht-on-accent) !important;
+}
+
+/* Le rouge exterieur rgb(209,94,94) est nettement plus sombre que le bleu et le gris :
+ * `--ht-on-accent` n'y donnait que 4.26, seule des trois barres a rater le seuil.
+ * `--ht-on-red`, le jeton prevu pour ce cas, le porte a 5.16. Le fond ne bouge pas. */
+.dhth-mi-possession-away {
+  color: var(--ht-on-red) !important;
 }
 
 /* Panneaux et boutons poses sur le vert clair rgb(121,167,119) de Hattrick. Hattrick
