@@ -418,6 +418,20 @@ h2,
   color: var(--ht-green-head) !important;
 }
 
+/* Meme balise, meme feuille, meme piege : `h2 { border-bottom: 1px solid
+ * rgb(204,204,204) }` dans Standard_main_11.css. Un filet clair sous CHAQUE titre du
+ * site, invisible pour la sonde n°1 qui ne mesure que fonds et textes.
+ *
+ * Aucune exception a ecrire pour la zone d'identite : Hattrick met lui-meme cette
+ * bordure a 0 sur `.boxHead h2` — verifie, 18 des 21 h2 d'une page sont a 0px. On ne
+ * repeint donc que les trois qui portent reellement un filet.
+ *
+ * `border-bottom-color` seul, jamais `border-bottom` : le raccourci reposerait aussi
+ * la largeur, et 1 px de plus sur chaque titre decale toute la page (point 8). */
+h2 {
+  border-bottom-color: var(--ht-line) !important;
+}
+
 /* `inherit` et non une couleur fixe. Le but est seulement de neutraliser la regle
  * sur `h2` ci-dessus, pas de decider a la place du site : Hattrick adapte la couleur
  * du texte au theme de chaque equipe — blanc sur un bandeau fonce, gris sur le
@@ -450,6 +464,45 @@ h2,
 h2.category {
   background-color: var(--ht-surface-3) !important;
   color: var(--ht-fg) !important;
+}
+
+/* Les filets qui restaient autour du bandeau : rgb(170,170,170) a gauche et a droite,
+ * plus celui du haut. Celui du bas vient de la regle sur `h2` ci-dessus. `border-color`
+ * couvre les quatre cotes d'un coup — c'est une couleur, pas une largeur, donc rien ne
+ * bouge dans la mise en page.
+ *
+ * Avec `.borderSeparator` ci-dessous, cela leve l'obstacle decrit dans le commentaire
+ * precedent : les trois filets clairs a 35 px d'intervalle qui avaient fait annuler
+ * l'essai d'assombrissement du bandeau. */
+h2.category {
+  border-color: var(--ht-line) !important;
+}
+
+/* Le troisieme filet, `div.borderSeparator` — 14 exemplaires sur la seule liste des
+ * joueurs. Meme rgb(204,204,204), meme feuille, meme absence de `!important`. */
+.borderSeparator {
+  border-bottom-color: var(--ht-line) !important;
+}
+
+/* Cadre des drapeaux, rgb(221,221,204) : 42 petits liseres creme sur cette page.
+ * On ne touche PAS a l'image — seulement au cadre que le site pose autour d'elle,
+ * ce qui reste conforme au « ne pas toucher aux images » du CLAUDE.md. */
+a.flag img {
+  border-color: var(--ht-line) !important;
+}
+
+/* Cadres clairs rgb(203,212,203), encore une regle unique de Standard_main_11.css qui
+ * couvre cinq conteneurs d'un coup — dont `.pageOverlay`, le cadre des fenetres
+ * superposees, et `#playersTable`. Traiter la source evite de les reprendre un par un
+ * au fil des pages. */
+#bottom,
+#giveBox,
+#iframeBox,
+#playersTable,
+#shopBox,
+#top,
+.pageOverlay {
+  border-color: var(--ht-line) !important;
 }
 
 /* --- Barres de caracteristiques (.ht-bar) ---------------------------------- */

@@ -1247,6 +1247,11 @@ a.hire-scout-trigger {
  *
  * `border-color` seul, jamais le raccourci `border` : les largeurs 4/4/2 px sont la
  * mise en page du site et ne nous regardent pas (point 8 du CLAUDE.md). */
+/* Le cadre du panneau lui-meme, rgb(243,243,243) sur les quatre cotes. */
+.scout-table {
+  border-color: var(--ht-line) !important;
+}
+
 .scout-table .scout-row {
   border-bottom-color: var(--ht-line) !important;
 }
