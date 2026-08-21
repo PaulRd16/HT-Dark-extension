@@ -855,6 +855,57 @@ span.training-type-tag.training-type-tag {
   color: var(--ht-on-accent) !important;
 }
 
+/* --- Boite « Efficacite de l'entrainement » --------------------------------- */
+/* Cinq curseurs Material dont la portion remplie restait en rgb(204,204,204), avec
+ * le pourcentage clair pose dessus : 1.27:1.
+ *
+ * DEUX PIEGES ici, et le premier explique pourquoi le releve ne voyait rien.
+ *
+ *  1. La portion remplie n'est pas un FOND : Material la peint avec une `border-top`
+ *     de 21 px. Une sonde qui n'inspecte que `background-color` passe a cote — le
+ *     defaut etait visible a l'ecran et absent de toutes mes mesures.
+ *
+ *  2. Le curseur est en lecture seule, donc `.mdc-slider--disabled`, et Material lit
+ *     alors `--mat-slider-DISABLED-active-track-color` et non la variable normale.
+ *     Poser la mauvaise n'avait aucun effet.
+ *
+ * Traite par l'API de variables plutot qu'en disputant la border, comme pour
+ * `hattrick-playoff-tree`. Hattrick pose `.tr-slider[_ngcontent-…]` en (0,2,0) : le
+ * prefixe de balise plus la classe doublee donnent (0,2,1) sans toucher au hachage. */
+mat-slider.tr-slider.tr-slider {
+  --mat-slider-disabled-active-track-color: #267f30; /* le vert profond de Hattrick */
+  --mat-slider-disabled-inactive-track-color: #313b43;
+}
+
+.tr-slider-val,
+.tr-slider-val .black {
+  color: #ffffff !important; /* 5.05:1 sur le vert rempli */
+}
+
+/* --- Tableau des changements de caracteristiques ---------------------------- */
+/* Hattrick y dessine DEUX filets de poids inverse par rapport a leur importance :
+ *
+ *   tr                  1px solid rgb(224,224,224)  40x  separateur de rang, tres clair
+ *   tr.separator-top    1px dashed rgb(0,0,0)        1x  caracteristiques / forme, NOIR
+ *
+ * Le trait qui compte — la frontiere entre les caracteristiques et la forme — etait
+ * donc invisible sur fond sombre, pendant que le simple rythme des rangs criait. On
+ * inverse : les rangs passent au filet discret de la palette, la separation majeure
+ * devient un trait plein et visible.
+ *
+ * En box-shadow et non en border : la regle du site pese (0,5,3) avec !important, et
+ * la battre demanderait six classes doublees. Le box-shadow n'est dispute par personne
+ * et ne decale rien — hauteur de ligne verifiee inchangee a 30 px. Le pointille noir
+ * subsiste dessous, invisible sur le fond sombre. */
+.skills-table tr {
+  border-top-color: var(--ht-line) !important;
+  border-bottom-color: var(--ht-line) !important;
+}
+
+.skills-table tr.separator-top {
+  box-shadow: inset 0 1px 0 var(--ht-line-strong);
+}
+
 /* --- Textes secondaires ----------------------------------------------------- */
 .no-training {
   color: var(--ht-fg-dim) !important; /* rgb(82,82,82) d'origine : 1.98:1 */
@@ -883,6 +934,39 @@ span.training-type-tag.training-type-tag {
  *
  * Page a fort volume : 152 lignes de liste et autant de noms d'expediteur.
  * =========================================================================== */
+
+/* --- Contenu d'un message ouvert (releve du 21/08/2026) --------------------- */
+/* Trois sources de noir sur noir dans un message ouvert, sans rapport entre elles.
+ * Aucune n'avait de regle propre sur le texte fautif : toutes posent la couleur sur
+ * un conteneur et laissent heriter.
+ *
+ *  - `table[_ngcontent-…]` colore en noir TOUT tableau du composant. C'est le tableau
+ *    des changements de caracteristiques d'un rapport d'entrainement. Scope par
+ *    `#ngTable`, identifiant stable du conteneur — meme procede que `#ngChat`,
+ *    `#ngHelp` et `#ngOffice` ailleurs dans le theme, et sans dependre du hachage.
+ *  - `.message-center-message-actionbar-actions` : la barre d'actions, d'ou le bouton
+ *    « Sauvegarder les parametres » a 1.55:1.
+ *  - `.close-button` : seul des trois a poser un !important, en (0,2,0). D'ou la
+ *    classe doublee, qui porte a (0,2,1). */
+#ngTable table {
+  color: var(--ht-fg) !important;
+}
+
+.message-center-message-actionbar-actions {
+  color: var(--ht-fg) !important;
+}
+
+a.close-button.close-button {
+  color: var(--ht-link) !important;
+}
+
+/* Date du message : rgb(137,137,137) a 3.27:1. Le `span` enfant porte sa propre
+ * couleur, la regle sur le conteneur seul ne l'atteint pas. */
+.message-center-message-content-date,
+.message-center-message-content-date span {
+  color: var(--ht-fg-dim) !important;
+}
+
 
 .dots-wrapper,
 li.message-center-messagelist-item,
