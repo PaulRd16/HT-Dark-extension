@@ -19,13 +19,26 @@
 
 html,
 body {
-  background-color: var(--ht-bg) !important; /* neutralise le fond du theme de club */
   color: var(--ht-fg);
 }
 
-/* Hattrick pose une image de fond issue du theme de club (/img/ClubTheme/backgrounds/).
- * On la retire : la couleur d'equipe reviendra en accent, pas en tapisserie. */
-body {
+/* PREFIXE `html` INDISPENSABLE, et c'est un piege qui a tenu longtemps.
+ *
+ * Le bloc <style> injecte par equipe ne se contente pas de `#menu` et `.boxHead` : il
+ * pose aussi, sur `body`, la couleur du theme de club ET un papier peint
+ * (/img/ClubTheme/backgrounds/), le tout en !important. Sur l'analyse d'equipe cela
+ * representait 1 130 000 px² de vert visible.
+ *
+ * Une regle en `body` est a specificite EGALE (0,0,1) : les deux !important
+ * s'annulent, et c'est l'ordre qui tranche — le bloc injecte etant ecrit dans la page,
+ * il gagne toujours. Le prefixe `html` porte a (0,0,2) et suffit.
+ *
+ * Ce n'est PAS une entorse au point 5 : le `body` ne fait pas partie de la zone
+ * d'identite. Verifie apres correctif, `#menu` et `.boxHead` gardent la couleur de
+ * l'equipe affichee. La couleur d'equipe reste un accent, elle cesse d'etre une
+ * tapisserie. */
+html body {
+  background-color: var(--ht-bg) !important;
   background-image: none !important;
 }
 

@@ -565,6 +565,7 @@ hattrick-rating {
  *    a son PROPRE vert fonce rgb(38,127,48) ou le blanc tient deja 5.09:1. Seule sa
  *    liste depliante retombe sur le vert clair. */
 .htbox-footer label,
+.htbox-footer > span,
 .mo-formation-list,
 .mo-formation-list div,
 .mo-formation-list-formation {
@@ -949,6 +950,46 @@ li.message-center-messagelist-item.selected {
 
 /* La navigation `.dashboard-navigation` est traitee avec les trois autres systemes
  * d'onglets du site, dans 03-components.css. */
+
+/* --- Mode « Parametres » du bureau ------------------------------------------ */
+/* Releve du 21/08/2026. Le bouton « Parametres » bascule `#ngOffice` en
+ * `.settings-mode` et fait apparaitre toute une couche d'interface qui n'existe pas
+ * autrement — jamais examinee jusqu'ici, et entierement blanche :
+ *
+ *   #ngOffice.settings-mode              1 376 000 px²   le fond du mode
+ *   .widget-content-wrapper.widget-settings  899 000 px²  (6x) les panneaux de widget
+ *   .size-selection-container                 75 000 px²  (19x) les vignettes de taille
+ *   .dashboard-settings                       52 000 px²   le panneau du bureau
+ *
+ * C'est le rappel du point 1 : un composant qui n'est pas affiche ne peut pas etre
+ * mesure. Rien de tout cela n'existe dans le DOM tant qu'on n'a pas clique.
+ *
+ * Aucune regle de TEXTE n'a ete necessaire : les libelles portaient deja --ht-fg et
+ * sont redevenus lisibles des que leur fond est passe au sombre. Trois niveaux, pour
+ * que les panneaux se detachent du fond et les vignettes des panneaux. */
+#ngOffice.settings-mode {
+  background-color: var(--ht-bg) !important;
+}
+
+.widget-content-wrapper.widget-settings,
+.dashboard-settings {
+  background-color: var(--ht-surface) !important;
+}
+
+.size-selection-container {
+  background-color: var(--ht-surface-2) !important;
+}
+
+/* Champ de saisie Material du mode parametres, aligne sur les autres controles. */
+.mat-mdc-text-field-wrapper {
+  background-color: var(--ht-surface-2) !important;
+}
+
+/* « Supprimer le bureau » : rouge rgb(217,30,30) a 3.06:1 sur la surface sombre.
+ * Meme role que `.red` / `.lost` / `.negative`, donc meme jeton. */
+button.delete-dashboard {
+  color: var(--ht-danger) !important;
+}
 
 /* --- Calendrier (famille c-*) ---------------------------------------------- */
 .c-week-info,

@@ -639,6 +639,7 @@ ul.task-group .deadline {
 .date,
 .smallText,
 .shy,
+.shyerThanShy,
 .pmCharacterName,
 .hoverDiv-inner p {
   color: var(--ht-fg-dim) !important;
