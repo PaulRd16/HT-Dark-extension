@@ -244,6 +244,43 @@ est mis à jour mais l'extension n'a pas été rechargée. Avant de conclure sur
 que les variables employées sont bien définies :
 `getComputedStyle(document.documentElement).getPropertyValue('--ht-on-accent')`.
 
+### 11. Un garde-fou se juge sur ce qu'il refuse, pas sur ce qu'il vérifie
+
+`tools/build-firefox.py` est le seul contrôle automatique du projet : c'est lui qui garantit
+qu'aucun JavaScript, aucune permission et aucune donnée personnelle ne part dans le paquet.
+L'audit du 21/08/2026 y a trouvé trois défauts, tous de la même famille.
+
+**Vérifier des présences ne protège de rien.** Le script s'assurait que les clés attendues
+*existent* et que les deux manifestes concordent. Rien n'interdisait à une clé **indésirable**
+d'apparaître : un futur `permissions`, un `background`, un `web_accessible_resources` ou un
+`matches` élargi aurait été empaqueté sans un mot. Pour une extension dont l'argument tient
+entièrement à ce qu'elle **n'a pas**, ce sont les absences qu'il faut affirmer — c'est
+l'assertion la moins chère à écrire, et la seule qui protège l'invariant contre soi-même dans
+six mois.
+
+**Une liste d'interdits qui cite ses valeurs les publie à son tour.** Le balayage
+anti-données-personnelles nommait en clair l'identifiant d'équipe et deux noms d'équipe réels.
+Il faisait parfaitement son travail sur le paquet — qui n'a jamais rien contenu — pendant que
+sa propre définition, suivie par git, les exposait sur le dépôt public. Les motifs du fichier
+suivi décrivent désormais la **forme** du défaut (`\b\d{6,}\b` : un nombre de six chiffres n'a
+rien à faire dans une feuille de style) ; les valeurs exactes vivent dans
+`tools/interdits.local.txt`, gitignoré. Corollaire : **corriger le fichier n'efface pas
+l'historique**, où les valeurs restent lisibles.
+
+**Et la portée du balayage est un piège en soi.** Il ne lisait que le CSS, alors que le paquet
+embarque aussi `_locales/*/messages.json` — qui porte le nom et la description affichés sur la
+fiche AMO, donc le texte le plus exposé à une touche personnelle. Un contrôle qui ne couvre
+qu'une partie de ce qu'il livre donne la même assurance qu'un contrôle absent, en moins
+visible.
+
+**Un garde-fou qu'on n'a jamais vu échouer n'est pas un garde-fou.** Les seize défauts de
+l'audit ont été injectés un par un, sources restaurées à chaque fois, pour vérifier que le
+build refuse bien. Le détail qui compte : en ne mutant **qu'un** manifeste, c'est le contrôle
+de divergence qui tirait le premier — le refus était obtenu, mais par le mauvais contrôle, et
+le garde-fou visé restait non prouvé. Il faut muter les **deux** de façon cohérente, ce qui est
+de toute façon l'erreur réaliste puisqu'on modifie les manifestes ensemble. **Un test qui passe
+pour la mauvaise raison ne prouve rien** — et c'est indétectable sans lire le motif du refus.
+
 ---
 
 ## Repères
