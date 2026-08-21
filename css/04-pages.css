@@ -893,17 +893,32 @@ mat-slider.tr-slider.tr-slider {
  * inverse : les rangs passent au filet discret de la palette, la separation majeure
  * devient un trait plein et visible.
  *
- * En box-shadow et non en border : la regle du site pese (0,5,3) avec !important, et
- * la battre demanderait six classes doublees. Le box-shadow n'est dispute par personne
- * et ne decale rien — hauteur de ligne verifiee inchangee a 30 px. Le pointille noir
- * subsiste dessous, invisible sur le fond sombre. */
-.skills-table tr {
-  border-top-color: var(--ht-line) !important;
-  border-bottom-color: var(--ht-line) !important;
+ * LE CHEMIN POUR Y ARRIVER, car les deux evidences echouent :
+ *
+ *  - Viser le `tr` ne marche pas : les regles du site pesent (0,4,3) et (0,5,3) avec
+ *    !important, et les battre demanderait cinq a six classes doublees.
+ *  - Un `box-shadow` sur le `tr` ne marche pas non plus : le style calcule l'accepte,
+ *    mais Chrome ne le PEINT pas sur une ligne de tableau en `border-collapse:
+ *    collapse`. Correctif qui semblait bon a la mesure et ne se voyait pas a l'ecran.
+ *
+ * La sortie est dans l'algorithme de fusion des bordures : a largeur egale, la
+ * bordure d'une CELLULE l'emporte sur celle de sa ligne, et `solid` l'emporte sur
+ * `dashed`. Les `td` n'ayant aucune bordure, le terrain y est libre.
+ *
+ * On ne pose ici que la largeur et le style : la couleur vient de la regle generale
+ * `table, th, td { border-color: var(--ht-line) }` de 03-components.css — c'est
+ * d'ailleurs elle qui, avec son !important, faisait echouer une ecriture en
+ * raccourci `border-top`. Les rangs heritent donc du filet du theme sans rien
+ * declarer, et seul le separateur surcharge la couleur.
+ *
+ * Hauteurs verifiees avant/apres : identiques ligne par ligne, table a 297 px. */
+.skills-table td {
+  border-top-width: 1px;
+  border-top-style: solid;
 }
 
-.skills-table tr.separator-top {
-  box-shadow: inset 0 1px 0 var(--ht-line-strong);
+.skills-table tr.separator-top td {
+  border-top-color: var(--ht-line-strong) !important;
 }
 
 /* --- Textes secondaires ----------------------------------------------------- */
