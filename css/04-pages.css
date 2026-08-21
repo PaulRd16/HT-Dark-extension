@@ -1237,6 +1237,51 @@ a.hire-scout-trigger {
   color: var(--ht-fg) !important;
 }
 
+/* Separateurs BLANCS de 4 px, reellement peints sur le panneau sombre : une croix
+ * blanche en travers d'un bloc de 626x461. Le module est bati en `div`, pas en
+ * `table` : la regle globale `table, th, td { border-color }` ne l'atteint pas, et il
+ * a fallu les relever un par un.
+ *
+ * Ce defaut a traverse toutes les passes precedentes parce que la sonde n°1 ne mesure
+ * que les FONDS et les TEXTES — jamais les bordures. Note ajoutee dans sondes.md.
+ *
+ * `border-color` seul, jamais le raccourci `border` : les largeurs 4/4/2 px sont la
+ * mise en page du site et ne nous regardent pas (point 8 du CLAUDE.md). */
+.scout-table .scout-row {
+  border-bottom-color: var(--ht-line) !important;
+}
+
+.scout-table .scout-col {
+  border-right-color: var(--ht-line) !important;
+}
+
+.scout-table .scout-cell.scout-prospects {
+  border-top-color: var(--ht-line) !important;
+}
+
+/* Gris rgb(112,112,112) de Hattrick, concu pour un fond clair : 2.74:1 chez nous.
+ * Les deux emplois sont du texte secondaire — pays du critere de recherche, lien de
+ * parente d'un prospect — donc le gris secondaire du theme, pas la couleur de corps. */
+.scout-table .scout-search-criteria-form.criteria-display .scout-search-criteria-country,
+.scout-table p.family-relationship {
+  color: var(--ht-fg-dim) !important;
+}
+
+/* Actions indisponibles, rgb(102,102,102) et rgb(107,107,107). L'etat desactive est une
+ * information : il doit rester EN RETRAIT, pas devenir illisible. `--ht-fg-dim` le tient
+ * a distance du texte de corps tout en restant lisible. `.NTScoutActionDisable` n'est
+ * pas sous `.scout-table` mais son nom est assez specifique pour rester nu. */
+.scout-table .scout-search-criteria-actions a.disabled,
+.NTScoutActionDisable {
+  color: var(--ht-fg-dim) !important;
+}
+
+/* Prospect selectionne : rgb(213,230,215), le vert pale de selection. C'est un etat,
+ * on garde la teinte en l'assombrissant — meme jeton que les autres selections. */
+.scout-table .scout-prospects.scout-cell.prospect-selected {
+  background-color: var(--ht-select) !important;
+}
+
 /* Les boutons pleins du module sont traites dans 03-components.css. */
 
 /* ===========================================================================

@@ -62,7 +62,27 @@ Le signe qui doit alerter : un ratio médiocre mais pas catastrophique sur un é
 les ancêtres sont transparents. Comparer alors les rectangles des deux couches — si l'un est
 contenu dans l'autre, c'est lui le vrai fond.
 
-**Deuxième limite : la sonde ne teste pas la visibilité.** Un élément en `visibility: hidden` a
+**Deuxième limite, la plus coûteuse : la sonde ne regarde QUE les fonds et les textes.**
+Une **bordure** claire ne l'est jamais. Le réseau de recrutement portait trois séparateurs
+blancs de 4 px — une croix blanche en travers d'un panneau sombre de 626×461 — qui ont traversé
+toutes les passes de vérification sans jamais apparaître dans un relevé. Le module est bâti en
+`div`, donc la règle globale `table, th, td { border-color }` ne le rattrapait pas non plus.
+
+Sur un composant qui n'est pas un `<table>`, ajouter ce balayage :
+
+```js
+[...document.querySelectorAll('LE_CONTENEUR *')].flatMap(e => {
+  const cs = getComputedStyle(e);
+  return ['Top', 'Right', 'Bottom', 'Left']
+    .filter(s => parseFloat(cs['border' + s + 'Width']) >= 1)
+    .map(s => `${e.className} border-${s.toLowerCase()} ${cs['border' + s + 'Width']} ${cs['border' + s + 'Color']}`);
+}).filter(l => /rgb\((2[0-4]\d|25[0-5]), /.test(l))
+```
+
+Corriger ensuite en `border-color` **seul** — jamais le raccourci `border`, qui repose aussi la
+largeur et décale la page (point 8 du `CLAUDE.md`).
+
+**Troisième limite : la sonde ne teste pas la visibilité.** Un élément en `visibility: hidden` a
 bien une taille et une couleur de fond, donc il apparaît dans les surfaces claires alors qu'il
 n'est jamais peint. Vu sur `a.close-overlay` (le voile des fenêtres superposées), signalé comme
 508 000 px² de blanc alors qu'il est masqué au repos. Ajouter `getComputedStyle(e).visibility` au
