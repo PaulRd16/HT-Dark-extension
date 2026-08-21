@@ -1539,16 +1539,27 @@ table.htbox-table tr.legend th {
  *    simple `!important` externe, sans avoir besoin de doubler un identifiant.
  * =========================================================================== */
 
-/* --- Ligne « Keeper » (attribut bgcolor natif) ------------------------------ */
-/* Hattrick signale les joueurs specialistes gardien par `<tr bgcolor="#FFDB4D">`,
- * un jaune pale au sens propre du terme : pas une seule classe ni regle de feuille,
- * l'attribut HTML pre-CSS. La sonde 2 ne voit donc rien — chercher `[bgcolor]` sur
- * l'element, pas dans les feuilles, quand une couleur resiste sans regle lisible.
+/* --- Lignes de competence en surbrillance (attribut bgcolor natif) ---------- */
+/* Hattrick signale les competences recherchees par `<tr bgcolor="#FFDB4D">` (fort)
+ * et `<tr bgcolor="#FFF1C4">` (notable) sur `.transferPlayerSkills` — un jaune pale
+ * au sens propre du terme : pas une seule classe ni regle de feuille, l'attribut
+ * HTML pre-CSS. La sonde 2 ne voit donc rien — chercher `[bgcolor]` sur l'element,
+ * pas dans les feuilles, quand une couleur resiste sans regle lisible.
  *
- * Fond CONSERVE : c'est un drapeau semantique, identique en mode clair, couvre le
- * point 7. Seul le texte etait a corriger — il heritait de --ht-fg via la regle
- * generale sur `body`, d'ou 1.08:1 sur les 25 lignes concernees. */
+ * Fond d'abord laisse intact (releve du 18/08/2026), le texte seul corrige. Signale
+ * ensuite par l'usage : les deux jaunes restaient trop vifs sur le theme sombre,
+ * bien plus criards que sur le fond clair d'origine ou ils avaient ete concus.
+ * Assombris d'un facteur uniforme (0.79) sur les deux, ce qui preserve leur rapport
+ * l'un a l'autre — c'est cet ecart de saturation qui code fort/notable, pas la
+ * teinte seule. Texte deja lisible avant meme cet ajustement (12:1 et plus), pas
+ * retouche. */
 tr[bgcolor="#FFDB4D"] {
+  background-color: #c9ad3d !important; /* remplace #FFDB4D, competence forte */
+  color: var(--ht-on-accent) !important;
+}
+
+tr[bgcolor="#FFF1C4"] {
+  background-color: #c9be9b !important; /* remplace #FFF1C4, competence notable */
   color: var(--ht-on-accent) !important;
 }
 
