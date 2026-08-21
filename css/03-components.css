@@ -567,10 +567,16 @@ h2.category {
  * et le blanc casse que Hattrick y pose n'y tient que 3.32:1 sur 28 occurrences.
  *
  * Meme fond, meme correctif que `.player-category` : texte sombre de la palette,
- * deja mesure a 4.67:1 sur cette teinte precise. Scope a `ht-match-rating` pour ne
- * pas toucher les autres contextes de `.ht-bar-level`, ceux que Hattrick traite
- * effectivement bien. */
-ht-match-rating .ht-bar-denomination {
+ * deja mesure a 4.67:1 sur cette teinte precise.
+ *
+ * SCOPE ELARGI apres mesure sur la page d'entrainement : le correctif visait d'abord
+ * `ht-match-rating`, mais les memes barres au meme vert existent hors de ce composant
+ * — 10 occurrences a 3.32:1 sur l'entrainement seul. C'est `.ht-bar-level` qui porte
+ * le vert, pas le composant qui l'entoure ; c'est donc lui qui doit porter le scope.
+ *
+ * Le libelle de `.ht-bar-max` (la piste) n'est pas concerne : il est deja a 5.61:1
+ * grace a la regle sur la piste en ton moyen. */
+.ht-bar-level .ht-bar-denomination {
   color: var(--ht-on-accent) !important;
 }
 
@@ -616,6 +622,7 @@ legend h3,
 .message-date,
 .message-center-messagelist-sender span,
 .message-center-messagelist-date,
+.match-date,
 ul.task-group .deadline {
   color: var(--ht-fg-dim) !important;
 }
@@ -939,7 +946,11 @@ div.edited {
  * `.gray-background` : rgb(204,204,204) d'origine, releve sur l'estimation
  * d'entrainement d'equipe ou il couvrait 26 000 px² avec nos liens verts dessus, a
  * 1.18:1. Le nom est assez generique pour reapparaitre ailleurs — d'ou sa place ici. */
-.black {
+/* CLASSE TRIPLEE, et non doublee. Hattrick pose `.black[_ngcontent-…]` soit (0,2,0)
+ * AVEC !important : une classe doublee serait a egalite et perdrait sur l'ordre de
+ * chargement. Constate sur les curseurs de la page d'entrainement, ou le texte
+ * restait noir a 1.36:1. */
+.black.black.black {
   color: var(--ht-fg) !important;
 }
 

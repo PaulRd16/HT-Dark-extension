@@ -827,6 +827,23 @@ span.training-type-tag.training-type-tag {
   background-color: var(--ht-green-deep) !important; /* le vert profond de Hattrick, rgb(38,127,48) */
 }
 
+/* Les deux etats A VENIR, oublies au premier passage : la matrice complete est
+ * {none, partial, full} x {played, upcoming}, soit six etats et non quatre. Hattrick
+ * y pose des gris — rgb(204,204,204) pour partial, rgb(128,128,128) pour full — sur
+ * lesquels le libelle blanc tombait a 1.61 et 3.95:1.
+ *
+ * Traites en verts SOURDIS plutot qu'en gris : la portion a venir annonce le niveau
+ * d'entrainement qu'elle apportera, donc elle appartient a la meme famille que sa
+ * contrepartie jouee. Sourdis pour se lire comme « pas encore acquis ». L'ecart avec
+ * les portions jouees est de 1.72 et 2.16, celui entre les deux a-venir de 1.68. */
+.bar-section.partial.upcoming {
+  background-color: #4a6b4c !important; /* remplace rgb(204,204,204) */
+}
+
+.bar-section.full.upcoming {
+  background-color: #2c4a30 !important; /* remplace rgb(128,128,128) */
+}
+
 .bar-section span {
   color: var(--ht-on-accent-light) !important;
 }
@@ -1309,6 +1326,66 @@ tr[bgcolor="#FFDB4D"] {
  * a 4.62:1 sur ce rouge specifique, sans etre le noir absolu qui detonnerait ailleurs. */
 .bar-level.verylow .bar-denomination {
   color: var(--ht-on-red) !important;
+}
+
+/* ===========================================================================
+ * PAGE D'ACCUEIL PUBLIQUE — releve du 21/08/2026 sur /fr/
+ *
+ * La vitrine et le formulaire de connexion, servis a l'adresse racine et a ses
+ * variantes de langue (/fr/, /en/...). Jamais examinee jusqu'ici parce qu'un joueur
+ * connecte ne la voit pas — mais c'est la PREMIERE page que decouvre un nouvel
+ * utilisateur de l'extension, et celle qui reapparait a chaque expiration de session.
+ * Le `matches` en `https://*.hattrick.org/*` la couvre depuis toujours.
+ *
+ * Elle n'a aucune classe en commun avec le reste du site : ni `.box`, ni `.boxBody`,
+ * ni `.mainBox`. Presque tout le travail des autres feuilles passait donc a cote,
+ * et seul le fond de page etait sombre — d'ou du texte clair sur trois grandes
+ * bandes blanches.
+ * =========================================================================== */
+
+/* Les trois grandes bandes de la vitrine, en blanc pur : 423 000, 133 000 et
+ * 95 000 px². A elles seules elles portaient tout le contenu de la page. */
+.featuresContainer,
+.testimonial-box,
+.start-stats {
+  background-color: var(--ht-surface) !important;
+}
+
+/* Le formulaire de connexion. `.landing-form-wrapper` pose `color: rgb(0,0,0)` sur
+ * son conteneur et TOUT son contenu en herite — les huit textes noirs de la page
+ * n'avaient aucune regle propre. Une seule declaration les traite, c'est le motif
+ * `.financeDetailsBox` du point 2. */
+.landing-form-wrapper {
+  color: var(--ht-fg) !important;
+}
+
+/* Titres des encarts de presentation, hors de tout `.boxBody` donc non couverts par
+ * la regle generale sur `h3`. */
+.featureBox h3 {
+  color: var(--ht-fg) !important;
+}
+
+/* Pastille « ou » entre les modes de connexion. `.capital` est trop generique pour
+ * etre ciblee a nu — la meme classe sert au titre du formulaire, sur un autre fond. */
+.or-separator span.capital {
+  background-color: var(--ht-surface) !important;
+  color: var(--ht-fg-dim) !important;
+}
+
+/* Temoignages. Ces trois textes etaient CORRECTS avant correctif — du sombre sur le
+ * blanc d'origine. C'est en assombrissant la bande ci-dessus qu'ils sont devenus
+ * illisibles, a 1.04 et 1.49:1. Rappel utile : assombrir une surface ne resout rien
+ * tant qu'on n'a pas remesure ce qu'elle portait. */
+.testimonial-box {
+  color: var(--ht-fg) !important;
+}
+
+.testimonial-box a {
+  color: var(--ht-link) !important;
+}
+
+.testimonial-box-quote p {
+  color: var(--ht-fg-dim) !important;
 }
 
 /* ===========================================================================
