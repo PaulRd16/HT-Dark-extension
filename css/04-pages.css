@@ -942,6 +942,18 @@ mat-slider.tr-slider.tr-slider {
   border-top-color: var(--ht-fg-dim) !important;
 }
 
+/* Tableau de prevision (`.training-preview-table`), un second composant de la meme
+ * page. Sa bordure de rang, rgb(224,224,224), est posee par Angular sous la forme
+ * `.training-preview-table[_ngcontent] table[_ngcontent] tbody[_ngcontent] tr[_ngcontent]`
+ * avec `!important` : cinq classes/attributs contre notre `tr` nu du bloc tableaux de
+ * 03-components.css, meme en !important. Pas d'id stable sur ce composant — verifie
+ * sur toute la chaine d'ancetres jusqu'a `ht-mainbox` — donc pas de repli possible sur
+ * un id : on double la classe stable jusqu'a depasser (0,5,0), la technique de repli du
+ * point 4 du CLAUDE.md. */
+.training-preview-table.training-preview-table.training-preview-table.training-preview-table.training-preview-table.training-preview-table tr {
+  border-color: var(--ht-line) !important;
+}
+
 /* --- Textes secondaires ----------------------------------------------------- */
 .no-training {
   color: var(--ht-fg-dim) !important; /* rgb(82,82,82) d'origine : 1.98:1 */

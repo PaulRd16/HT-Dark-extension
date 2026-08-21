@@ -140,7 +140,12 @@ body,
 /* --- Tableaux -------------------------------------------------------------- */
 /* Les tableaux sont transparents par-dessus les boites : il suffit des bordures
  * et d'un leger zebrage pour les rendre lisibles sur fond sombre. */
+/* `tr` a longtemps manque a cette liste, et le trou ne se voyait pas : la page
+ * d'entrainement portait 21 lignes a `border-bottom: 1px solid rgb(224,224,224)`
+ * posees sur la RANGEE, pas sur les cellules. Aucune sonde ne les relevait, puisque
+ * seules les couleurs de fond et de texte etaient mesurees. */
 table,
+tr,
 th,
 td {
   border-color: var(--ht-line) !important;
@@ -505,6 +510,12 @@ a.flag img {
   border-color: var(--ht-line) !important;
 }
 
+/* Cadre de la barre d'entrainement (`ht-training-bar`), rgb(219,224,231) sur les
+ * quatre cotes. Un encadre simple, sans information : couleur seule. */
+.training-bar-wrapper {
+  border-color: var(--ht-line) !important;
+}
+
 /* --- Barres de caracteristiques (.ht-bar) ---------------------------------- */
 /* Present partout ou une valeur est representee : joueurs, notes de match, jeunes.
  *
@@ -844,12 +855,20 @@ ul.sidebarTabbedList li a,
  * rgb(243,243,243). Peindre `.nav-tabs-wrapper` ne les atteignait pas, et notre vert
  * de lien s'y retrouvait a 1.69:1 — un defaut cree par le theme lui-meme. */
 
-/* La bordure n'est reprise que sur les deux familles qui en dessinent une. Regrouper
- * n'a pas a changer le rendu : `.nav-tab` et `.dashboard-navigation` n'avaient pas
- * cette declaration, la leur donner au passage aurait ete un effet de bord. */
+/* CORRECTION d'une note qui figurait ici : « la bordure n'est reprise que sur les deux
+ * familles qui en dessinent une, `.nav-tab` et `.dashboard-navigation` n'avaient pas
+ * cette declaration ». C'etait vrai de NOS regles, pas de celles du site — le balayage
+ * des bordures a trouve `.nav-tabs-wrapper` en rgb(227,227,227) et `.nav-tab` en
+ * rgb(223,223,223) sur la page d'entrainement. Les ajouter ne cree donc aucune
+ * bordure : cela recolore celles que Hattrick dessine deja.
+ *
+ * La prudence de la note reste juste dans son principe — ne pas donner une bordure a
+ * qui n'en a pas — mais elle avait ete verifiee du mauvais cote. */
 ul.tabbedList li a,
 .ht-tabs > *,
-.ht-tabs li {
+.ht-tabs li,
+.nav-tabs-wrapper,
+.nav-tab {
   border-color: var(--ht-line) !important;
 }
 
